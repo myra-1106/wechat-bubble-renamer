@@ -55,7 +55,14 @@ input[type=file]{display:none}
 <p class="note">ZIP 解压和重新压缩均在你的浏览器中完成。官方命名已匹配文字、文件、红包和 AA 气泡。</p>
 </main><div id="toast" class="toast"></div>
 <script>
-const RULES={"左浅.png": "ChatRoom_Bubble_Text_Receiver_White@3x.png", "左浅上.png": "ChatRoom_Bubble_Text_Receiver_White_Top@3x.png", "左浅中.png": "ChatRoom_Bubble_Text_Receiver_White_Middle@3x.png", "左浅下.png": "ChatRoom_Bubble_Text_Receiver_White_End@3x.png", "左深.png": "ChatRoom_Bubble_Text_Receiver_Dark@3x.png", "左深上.png": "ChatRoom_Bubble_Text_Receiver_Dark_Top@3x.png", "左深中.png": "ChatRoom_Bubble_Text_Receiver_Dark_Middle@3x.png", "左深下.png": "ChatRoom_Bubble_Text_Receiver_Dark_End@3x.png", "右浅.png": "ChatRoom_Bubble_Text_Sender_Green@3x.png", "右浅上.png": "ChatRoom_Bubble_Text_Sender_Green_Top@3x.png", "右浅中.png": "ChatRoom_Bubble_Text_Sender_Green_Middle@3x.png", "右浅下.png": "ChatRoom_Bubble_Text_Sender_Green_End@3x.png", "右深.png": "ChatRoom_Bubble_Text_Sender_Green_Dark@3x.png", "右深上.png": "ChatRoom_Bubble_Text_Sender_Green_Top_Dark@3x.png", "右深中.png": "ChatRoom_Bubble_Text_Sender_Green_Middle_Dark@3x.png", "右深下.png": "ChatRoom_Bubble_Text_Sender_Green_End_Dark@3x.png", "浅文件.png": "ChatRoom_Bubble_App_Sender@3x.png", "浅文件上.png": "ChatRoom_Bubble_App_Sender_Top@3x.png", "浅文件中.png": "ChatRoom_Bubble_App_Sender_Middle@3x.png", "浅文件下.png": "ChatRoom_Bubble_App_Sender_End@3x.png", "深文件.png": "ChatRoom_Bubble_App_Sender_Dark@3x.png", "深文件上.png": "ChatRoom_Bubble_App_Sender_Top_Dark@3x.png", "深文件中.png": "ChatRoom_Bubble_App_Sender_Middle_Dark@3x.png", "深文件下.png": "ChatRoom_Bubble_App_Sender_End_Dark@3x.png", "左浅红包.png": "ChatRoom_Bubble_HB_Receiver@3x.png", "左深红包.png": "ChatRoom_Bubble_HB_Receiver_Dark@3x.png", "左浅红包接收.png": "ChatRoom_Bubble_HB_Receiver_Handled@3x.png", "左深红包接收.png": "ChatRoom_Bubble_HB_Receiver_Handled_Dark@3x.png", "左浅红包过期.png": "ChatRoom_Bubble_HB_Overtime_Receiver@3x.png", "左深红包过期.png": "ChatRoom_Bubble_HB_Overtime_Receiver_Dark@3x.png", "右浅红包.png": "ChatRoom_Bubble_HB_Sender@3x.png", "右深红包.png": "ChatRoom_Bubble_HB_Sender_Dark@3x.png", "右浅红包接收.png": "ChatRoom_Bubble_HB_Sender_Handled@3x.png", "右深红包接收.png": "ChatRoom_Bubble_HB_Sender_Handled_Dark@3x.png", "右浅红包过期.png": "ChatRoom_Bubble_HB_Overtime_Sender@3x.png", "右深红包过期.png": "ChatRoom_Bubble_HB_Overtime_Sender_Dark@3x.png", "左浅AA.png": "ChatRoom_Bubble_AA_Receiver@3x.png", "左深AA.png": "ChatRoom_Bubble_AA_Receiver_Dark@3x.png", "左浅AA接收.png": "ChatRoom_Bubble_AA_Receiver_Handled@3x.png", "左深AA接收.png": "ChatRoom_Bubble_AA_Receiver_Handled_Dark@3x.png", "左浅AA过期.png": "ChatRoom_Bubble_AA_Overtime_Receiver@3x.png", "左深AA过期.png": "ChatRoom_Bubble_AA_Overtime_Receiver_Dark@3x.png", "右浅AA.png": "ChatRoom_Bubble_AA_Sender@3x.png", "右深AA.png": "ChatRoom_Bubble_AA_Sender_Dark@3x.png", "右浅AA接收.png": "ChatRoom_Bubble_AA_Sender_Handled@3x.png", "右深AA接收.png": "ChatRoom_Bubble_AA_Sender_Handled_Dark@3x.png", "右浅AA过期.png": "ChatRoom_Bubble_AA_Overtime_Sender@3x.png", "右深AA过期.png": "ChatRoom_Bubble_AA_Overtime_Sender_Dark@3x.png"};
+const RULES={"左浅.png": "ChatRoom_Bubble_Text_Receiver_White@3x.png", "左浅上.png": "ChatRoom_Bubble_Text_Receiver_White_Top@3x.png", "左浅中.png": "ChatRoom_Bubble_Text_Receiver_White_Middle@3x.png", "左浅下.png": "ChatRoom_Bubble_Text_Receiver_White_End@3x.png",
+"左上.png": "ChatRoom_Bubble_Text_Receiver_White_Top@3x.png",
+"左中.png": "ChatRoom_Bubble_Text_Receiver_White_Middle@3x.png",
+"左下.png": "ChatRoom_Bubble_Text_Receiver_White_End@3x.png",
+"右上.png": "ChatRoom_Bubble_Text_Sender_Green_Top@3x.png",
+"右中.png": "ChatRoom_Bubble_Text_Sender_Green_Middle@3x.png",
+"右下.png": "ChatRoom_Bubble_Text_Sender_Green_End@3x.png",
+ "左深.png": "ChatRoom_Bubble_Text_Receiver_Dark@3x.png", "左深上.png": "ChatRoom_Bubble_Text_Receiver_Dark_Top@3x.png", "左深中.png": "ChatRoom_Bubble_Text_Receiver_Dark_Middle@3x.png", "左深下.png": "ChatRoom_Bubble_Text_Receiver_Dark_End@3x.png", "右浅.png": "ChatRoom_Bubble_Text_Sender_Green@3x.png", "右浅上.png": "ChatRoom_Bubble_Text_Sender_Green_Top@3x.png", "右浅中.png": "ChatRoom_Bubble_Text_Sender_Green_Middle@3x.png", "右浅下.png": "ChatRoom_Bubble_Text_Sender_Green_End@3x.png", "右深.png": "ChatRoom_Bubble_Text_Sender_Green_Dark@3x.png", "右深上.png": "ChatRoom_Bubble_Text_Sender_Green_Top_Dark@3x.png", "右深中.png": "ChatRoom_Bubble_Text_Sender_Green_Middle_Dark@3x.png", "右深下.png": "ChatRoom_Bubble_Text_Sender_Green_End_Dark@3x.png", "浅文件.png": "ChatRoom_Bubble_App_Sender@3x.png", "浅文件上.png": "ChatRoom_Bubble_App_Sender_Top@3x.png", "浅文件中.png": "ChatRoom_Bubble_App_Sender_Middle@3x.png", "浅文件下.png": "ChatRoom_Bubble_App_Sender_End@3x.png", "深文件.png": "ChatRoom_Bubble_App_Sender_Dark@3x.png", "深文件上.png": "ChatRoom_Bubble_App_Sender_Top_Dark@3x.png", "深文件中.png": "ChatRoom_Bubble_App_Sender_Middle_Dark@3x.png", "深文件下.png": "ChatRoom_Bubble_App_Sender_End_Dark@3x.png", "左浅红包.png": "ChatRoom_Bubble_HB_Receiver@3x.png", "左深红包.png": "ChatRoom_Bubble_HB_Receiver_Dark@3x.png", "左浅红包接收.png": "ChatRoom_Bubble_HB_Receiver_Handled@3x.png", "左深红包接收.png": "ChatRoom_Bubble_HB_Receiver_Handled_Dark@3x.png", "左浅红包过期.png": "ChatRoom_Bubble_HB_Overtime_Receiver@3x.png", "左深红包过期.png": "ChatRoom_Bubble_HB_Overtime_Receiver_Dark@3x.png", "右浅红包.png": "ChatRoom_Bubble_HB_Sender@3x.png", "右深红包.png": "ChatRoom_Bubble_HB_Sender_Dark@3x.png", "右浅红包接收.png": "ChatRoom_Bubble_HB_Sender_Handled@3x.png", "右深红包接收.png": "ChatRoom_Bubble_HB_Sender_Handled_Dark@3x.png", "右浅红包过期.png": "ChatRoom_Bubble_HB_Overtime_Sender@3x.png", "右深红包过期.png": "ChatRoom_Bubble_HB_Overtime_Sender_Dark@3x.png", "左浅AA.png": "ChatRoom_Bubble_AA_Receiver@3x.png", "左深AA.png": "ChatRoom_Bubble_AA_Receiver_Dark@3x.png", "左浅AA接收.png": "ChatRoom_Bubble_AA_Receiver_Handled@3x.png", "左深AA接收.png": "ChatRoom_Bubble_AA_Receiver_Handled_Dark@3x.png", "左浅AA过期.png": "ChatRoom_Bubble_AA_Overtime_Receiver@3x.png", "左深AA过期.png": "ChatRoom_Bubble_AA_Overtime_Receiver_Dark@3x.png", "右浅AA.png": "ChatRoom_Bubble_AA_Sender@3x.png", "右深AA.png": "ChatRoom_Bubble_AA_Sender_Dark@3x.png", "右浅AA接收.png": "ChatRoom_Bubble_AA_Sender_Handled@3x.png", "右深AA接收.png": "ChatRoom_Bubble_AA_Sender_Handled_Dark@3x.png", "右浅AA过期.png": "ChatRoom_Bubble_AA_Overtime_Sender@3x.png", "右深AA过期.png": "ChatRoom_Bubble_AA_Overtime_Sender_Dark@3x.png"};
 let items=[];
 const $=s=>document.querySelector(s), list=$("#list"), toast=$("#toast");
 function showToast(t){toast.textContent=t;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1800)}
@@ -78,14 +85,27 @@ async function addFiles(fileList){
    if(lower.endsWith(".zip")){
      try{
        const z=await JSZip.loadAsync(file);
-       const entries=Object.values(z.files).filter(e=>!e.dir && /\.(png|webp)$/i.test(e.name));
+       const entries=Object.values(z.files).filter(e=>{
+         const path=e.name.replace(/\\/g,"/");
+         const base=path.split("/").pop()||"";
+         return !e.dir
+           && /\.(png|webp)$/i.test(base)
+           && !path.includes("__MACOSX/")
+           && !base.startsWith("._")
+           && base!==".DS_Store";
+       });
        for(const e of entries){
          const blob=await e.async("blob");
          const name=cleanBase(e.name);
          items.push(makeItem(new File([blob],name,{type:blob.type||"image/png"}),e.name));
        }
      }catch(err){showToast("ZIP 读取失败")}
-   }else if(/\.(png|webp)$/i.test(lower)){items.push(makeItem(file,file.webkitRelativePath||file.name))}
+   }else if(/\.(png|webp)$/i.test(lower)
+      && !file.name.startsWith("._")
+      && file.name!==".DS_Store"
+      && !(file.webkitRelativePath||"").includes("__MACOSX/")){
+     items.push(makeItem(file,file.webkitRelativePath||file.name))
+   }
  }
  dedupe();render();
 }
