@@ -4,147 +4,215 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f2f2f7">
-<title>微信气泡一键命名</title>
+<title>微信气泡工具</title>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
-:root{color-scheme:light dark;--bg:#f2f2f7;--card:rgba(255,255,255,.78);--text:#111114;--sub:#6e6e73;--line:rgba(60,60,67,.14);--blue:#0a84ff;--green:#34c759;--red:#ff3b30;--shadow:0 18px 60px rgba(0,0,0,.12)}
-@media(prefers-color-scheme:dark){:root{--bg:#000;--card:rgba(28,28,30,.82);--text:#f5f5f7;--sub:#98989d;--line:rgba(255,255,255,.12);--shadow:0 18px 60px rgba(0,0,0,.45)}}
-*{box-sizing:border-box}body{margin:0;background:
-radial-gradient(circle at 15% 5%,rgba(10,132,255,.18),transparent 28%),
-radial-gradient(circle at 90% 15%,rgba(175,82,222,.14),transparent 25%),var(--bg);
-font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC",sans-serif;color:var(--text);min-height:100vh}
-.shell{width:min(920px,100%);margin:auto;padding:calc(20px + env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom))}
-.header{display:flex;justify-content:space-between;align-items:flex-start;margin:10px 4px 18px}.header h1{font-size:34px;letter-spacing:-1.2px;margin:0 0 6px}.header p{margin:0;color:var(--sub);font-size:15px}
-.badge{padding:8px 11px;border-radius:999px;background:rgba(52,199,89,.14);color:var(--green);font-weight:700;font-size:12px}
+:root{color-scheme:light dark;--bg:#f2f2f7;--card:rgba(255,255,255,.82);--text:#111114;--sub:#6e6e73;--line:rgba(60,60,67,.14);--blue:#0a84ff;--green:#34c759;--orange:#ff9500;--red:#ff3b30;--shadow:0 18px 60px rgba(0,0,0,.11)}
+@media(prefers-color-scheme:dark){:root{--bg:#000;--card:rgba(28,28,30,.84);--text:#f5f5f7;--sub:#98989d;--line:rgba(255,255,255,.12);--shadow:0 18px 60px rgba(0,0,0,.45)}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC",sans-serif;background:radial-gradient(circle at 12% 3%,rgba(10,132,255,.18),transparent 27%),radial-gradient(circle at 91% 10%,rgba(175,82,222,.14),transparent 24%),var(--bg)}
+button,input{font:inherit}.shell{width:min(940px,100%);margin:auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(34px + env(safe-area-inset-bottom))}
+.header{display:flex;justify-content:space-between;align-items:flex-start;margin:10px 4px 14px}.header h1{font-size:34px;letter-spacing:-1.2px;margin:0 0 5px}.header p{margin:0;color:var(--sub);font-size:14px}.badge{padding:8px 11px;border-radius:999px;background:rgba(52,199,89,.14);color:var(--green);font-weight:750;font-size:12px}
 .card{background:var(--card);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);overflow:hidden}
-.drop{margin:0;padding:28px 20px;text-align:center;border:1.5px dashed rgba(10,132,255,.45);border-radius:22px;background:rgba(10,132,255,.06);transition:.2s}.drop.drag{transform:scale(.99);background:rgba(10,132,255,.14)}
-.icon{width:58px;height:58px;border-radius:18px;background:linear-gradient(145deg,#2f9bff,#0066d6);margin:0 auto 14px;display:grid;place-items:center;color:white;font-size:28px;box-shadow:0 10px 24px rgba(10,132,255,.28)}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin:0 0 14px;border-radius:16px;background:rgba(118,118,128,.13)}.tab{border:0;border-radius:13px;padding:11px 10px;background:transparent;color:var(--sub);font-weight:750}.tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 9px rgba(0,0,0,.09)}
+.panel{display:none}.panel.active{display:block}
+.drop{padding:28px 20px;text-align:center;border:1.5px dashed rgba(10,132,255,.45);border-radius:22px;background:rgba(10,132,255,.06);transition:.2s}.drop.drag{transform:scale(.99);background:rgba(10,132,255,.14)}
+.icon{width:58px;height:58px;border-radius:18px;background:linear-gradient(145deg,#2f9bff,#0066d6);margin:0 auto 14px;display:grid;place-items:center;color:#fff;font-size:28px;box-shadow:0 10px 24px rgba(10,132,255,.28)}
 .drop h2{font-size:20px;margin:0 0 7px}.drop p{font-size:14px;color:var(--sub);margin:0 0 18px}
-.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.btn{appearance:none;border:0;border-radius:14px;padding:12px 17px;font-weight:700;font-size:15px;background:#e5e5ea;color:#111;cursor:pointer}.btn.primary{background:var(--blue);color:#fff}.btn.dark{background:#1c1c1e;color:#fff}.btn:disabled{opacity:.38;cursor:not-allowed}
-input[type=file]{display:none}
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.btn{appearance:none;border:0;border-radius:14px;padding:12px 17px;font-weight:750;font-size:15px;background:#e5e5ea;color:#111;cursor:pointer}.btn.primary{background:var(--blue);color:#fff}.btn.dark{background:#1c1c1e;color:#fff}.btn:disabled{opacity:.38;cursor:not-allowed}input[type=file]{display:none}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.stat{padding:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;text-align:center}.stat b{display:block;font-size:23px}.stat span{font-size:12px;color:var(--sub)}
-.toolbar{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}.toolbar h3{margin:0;font-size:17px}.toolbar button{border:0;background:none;color:var(--red);font-size:14px;font-weight:600}
-.empty{padding:42px 18px;text-align:center;color:var(--sub)}
-.list{max-height:52vh;overflow:auto}.row{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}
-.thumb{width:52px;height:52px;object-fit:contain;border-radius:13px;background:rgba(120,120,128,.09)}
-.names{min-width:0}.old{font-size:13px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.new{font-size:14px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
-.status{font-size:11px;font-weight:750;padding:6px 8px;border-radius:999px}.ok{background:rgba(52,199,89,.14);color:var(--green)}.warn{background:rgba(255,149,0,.14);color:#ff9500}
+.toolbar{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}.toolbar h3{margin:0;font-size:17px}.toolbar button{border:0;background:none;color:var(--red);font-size:14px;font-weight:650}
+.empty{padding:42px 18px;text-align:center;color:var(--sub)}.list{max-height:52vh;overflow:auto}.row{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}.thumb{width:52px;height:52px;object-fit:contain;border-radius:13px;background:rgba(120,120,128,.09)}.names{min-width:0}.old{font-size:13px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.new{font-size:14px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}.status{font-size:11px;font-weight:750;padding:6px 8px;border-radius:999px}.ok{background:rgba(52,199,89,.14);color:var(--green)}.warn{background:rgba(255,149,0,.14);color:var(--orange)}
 .footer{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--card);backdrop-filter:blur(25px)}.footer .btn{flex:1}
 .note{font-size:12px;color:var(--sub);text-align:center;margin:14px 18px 0;line-height:1.5}
+.maker-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.8fr);gap:14px}@media(max-width:720px){.maker-grid{grid-template-columns:1fr}}
+.segment{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:15px;background:rgba(118,118,128,.14);margin:0 0 14px}.segment button{border:0;background:transparent;border-radius:12px;padding:11px;font-weight:750;color:var(--sub)}.segment button.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.upload-slot{padding:20px;border:1.5px dashed var(--line);border-radius:20px;text-align:center;background:rgba(118,118,128,.06)}.upload-slot img{width:100%;max-height:210px;object-fit:contain;border-radius:14px;margin-bottom:12px;background:rgba(118,118,128,.07)}.upload-slot .placeholder{height:150px;display:grid;place-items:center;color:var(--sub);font-size:14px}
+.control-card{padding:18px}.control-card h3{margin:0 0 4px}.control-card>p{margin:0 0 16px;color:var(--sub);font-size:13px}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}.control{background:rgba(118,118,128,.08);padding:12px;border-radius:16px}.control label{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:8px}.control input[type=range]{display:block;width:100%}.control input[type=number]{width:64px;border:0;border-radius:9px;padding:7px;text-align:center;background:var(--card);color:var(--text)}
+.preview-card{padding:18px}.preview-card h3{margin:0 0 4px}.preview-card p{margin:0 0 14px;color:var(--sub);font-size:13px}.preview-stage{min-height:320px;border-radius:20px;background:linear-gradient(180deg,rgba(10,132,255,.08),rgba(118,118,128,.05));display:flex;flex-direction:column;justify-content:center;gap:18px;padding:24px;overflow:hidden}
+.bubble-wrap{display:flex}.bubble-wrap.right{justify-content:flex-end}.bubble-preview{min-width:130px;max-width:84%;min-height:64px;padding:18px 22px;display:flex;align-items:center;color:var(--text);font-size:15px;line-height:1.45;border-style:solid;border-color:transparent;background-clip:padding-box;border-image-repeat:stretch}
+.preview-tools{display:flex;gap:10px;margin-top:14px}.preview-tools label{flex:1;font-size:12px;color:var(--sub)}.preview-tools input{width:100%}
+.maker-footer{display:flex;gap:10px;margin-top:14px}.maker-footer .btn{flex:1}
+.summary{margin-top:14px;padding:14px;border-radius:18px;background:rgba(118,118,128,.08);font-size:13px;color:var(--sub);line-height:1.65}.summary b{color:var(--text)}
 .toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:#1c1c1e;color:#fff;padding:11px 16px;border-radius:999px;font-size:13px;transition:.25s;pointer-events:none;z-index:9}.toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
 </head>
 <body>
 <main class="shell">
-<header class="header"><div><h1>微信气泡一键命名</h1><p>PNG、WebP、ZIP 本地处理，不上传服务器</p></div><span class="badge">iOS</span></header>
-<section class="card" style="padding:12px">
-<div id="drop" class="drop">
-<div class="icon">⇧</div><h2>添加气泡素材</h2><p>选择图片、ZIP，或一次导入整个文件夹</p>
-<div class="actions">
-<label class="btn primary" for="files">选择文件</label>
-<label class="btn" for="folder">选择文件夹</label>
-<input id="files" type="file" multiple accept=".png,.webp,.zip">
-<input id="folder" type="file" multiple webkitdirectory directory>
-</div></div></section>
-<section class="stats"><div class="stat"><b id="total">0</b><span>文件总数</span></div><div class="stat"><b id="matched">0</b><span>已匹配</span></div><div class="stat"><b id="unmatched">0</b><span>待确认</span></div></section>
-<section class="card">
-<div class="toolbar"><h3>命名预览</h3><button id="clear">清空</button></div>
-<div id="list" class="list"><div class="empty">添加素材后，这里会显示原文件名和新文件名。</div></div>
-<div class="footer"><button id="download" class="btn dark" disabled>下载重命名 ZIP</button></div>
+<header class="header"><div><h1>微信气泡工具</h1><p>批量命名与九宫格气泡制作</p></div><span class="badge">iOS</span></header>
+<nav class="tabs"><button class="tab active" data-tab="maker">气泡制作</button><button class="tab" data-tab="rename">批量命名</button></nav>
+
+<section id="maker" class="panel active">
+<div class="maker-grid">
+<div class="card control-card">
+<h3>气泡素材</h3><p>分别上传左气泡和右气泡，文件原名不限。</p>
+<div class="segment"><button class="active" data-side="left">左气泡</button><button data-side="right">右气泡</button></div>
+<div class="upload-slot">
+<div id="makerPlaceholder" class="placeholder">当前未上传左气泡</div>
+<img id="makerImage" alt="" hidden>
+<label class="btn primary" for="makerFile">选择当前气泡图片</label>
+<input id="makerFile" type="file" accept=".png,.webp,image/png,image/webp">
+</div>
+<div class="summary" id="makerSummary"><b>左气泡：</b>未上传<br><b>右气泡：</b>未上传</div>
+</div>
+
+<div class="card preview-card">
+<h3>九宫格拉伸预览</h3><p>四个数值定义不可拉伸的边缘保护区，单位为像素。</p>
+<div class="preview-stage">
+<div id="previewWrap" class="bubble-wrap"><div id="bubblePreview" class="bubble-preview">这是一条用于检查拉伸效果的示例消息。</div></div>
+</div>
+<div class="preview-tools"><label>预览宽度<input id="previewWidth" type="range" min="150" max="520" value="280"></label></div>
+</div>
+</div>
+
+<div class="card control-card" style="margin-top:14px">
+<h3>切片参数</h3><p>参数按当前选中的左/右气泡分别保存。</p>
+<div class="controls">
+<div class="control"><label>Top <input id="topNum" type="number" min="0" max="300" value="24"></label><input id="topRange" type="range" min="0" max="300" value="24"></div>
+<div class="control"><label>Right <input id="rightNum" type="number" min="0" max="300" value="24"></label><input id="rightRange" type="range" min="0" max="300" value="24"></div>
+<div class="control"><label>Bottom <input id="bottomNum" type="number" min="0" max="300" value="24"></label><input id="bottomRange" type="range" min="0" max="300" value="24"></div>
+<div class="control"><label>Left <input id="leftNum" type="number" min="0" max="300" value="24"></label><input id="leftRange" type="range" min="0" max="300" value="24"></div>
+</div>
+<div class="maker-footer"><button id="resetSlices" class="btn">恢复默认</button><button id="exportMaker" class="btn dark" disabled>导出气泡制作 ZIP</button></div>
+</div>
+<p class="note">当前导出包包含左/右素材与 `bubble-config.json` 参数文件。气泡盒子、XOS、LAB 的专用目录和命名将在下一阶段分别适配。</p>
 </section>
-<p class="note">ZIP 解压和重新压缩均在你的浏览器中完成。官方命名已匹配文字、文件、红包和 AA 气泡。</p>
-</main><div id="toast" class="toast"></div>
+
+<section id="rename" class="panel">
+<section class="card" style="padding:12px">
+<div id="drop" class="drop"><div class="icon">⇧</div><h2>添加气泡素材</h2><p>选择图片、ZIP，或一次导入整个文件夹</p><div class="actions"><label class="btn primary" for="files">选择文件</label><label class="btn" for="folder">选择文件夹</label><input id="files" type="file" multiple accept=".png,.webp,.zip"><input id="folder" type="file" multiple webkitdirectory directory></div></div>
+</section>
+<section class="stats"><div class="stat"><b id="total">0</b><span>文件总数</span></div><div class="stat"><b id="matched">0</b><span>已匹配</span></div><div class="stat"><b id="unmatched">0</b><span>待确认</span></div></section>
+<section class="card"><div class="toolbar"><h3>命名预览</h3><button id="clear">清空</button></div><div id="list" class="list"><div class="empty">添加素材后，这里会显示原文件名和新文件名。</div></div><div class="footer"><button id="download" class="btn dark" disabled>下载重命名 ZIP</button></div></section>
+<p class="note">ZIP 解压和重新压缩均在浏览器中完成，并自动过滤 `__MACOSX`、`._*` 与 `.DS_Store`。</p>
+</section>
+</main>
+<div id="toast" class="toast"></div>
+
 <script>
-const RULES={"左浅.png": "ChatRoom_Bubble_Text_Receiver_White@3x.png", "左浅上.png": "ChatRoom_Bubble_Text_Receiver_White_Top@3x.png", "左浅中.png": "ChatRoom_Bubble_Text_Receiver_White_Middle@3x.png", "左浅下.png": "ChatRoom_Bubble_Text_Receiver_White_End@3x.png",
-"左上.png": "ChatRoom_Bubble_Text_Receiver_White_Top@3x.png",
-"左中.png": "ChatRoom_Bubble_Text_Receiver_White_Middle@3x.png",
-"左下.png": "ChatRoom_Bubble_Text_Receiver_White_End@3x.png",
-"右上.png": "ChatRoom_Bubble_Text_Sender_Green_Top@3x.png",
-"右中.png": "ChatRoom_Bubble_Text_Sender_Green_Middle@3x.png",
-"右下.png": "ChatRoom_Bubble_Text_Sender_Green_End@3x.png",
- "左深.png": "ChatRoom_Bubble_Text_Receiver_Dark@3x.png", "左深上.png": "ChatRoom_Bubble_Text_Receiver_Dark_Top@3x.png", "左深中.png": "ChatRoom_Bubble_Text_Receiver_Dark_Middle@3x.png", "左深下.png": "ChatRoom_Bubble_Text_Receiver_Dark_End@3x.png", "右浅.png": "ChatRoom_Bubble_Text_Sender_Green@3x.png", "右浅上.png": "ChatRoom_Bubble_Text_Sender_Green_Top@3x.png", "右浅中.png": "ChatRoom_Bubble_Text_Sender_Green_Middle@3x.png", "右浅下.png": "ChatRoom_Bubble_Text_Sender_Green_End@3x.png", "右深.png": "ChatRoom_Bubble_Text_Sender_Green_Dark@3x.png", "右深上.png": "ChatRoom_Bubble_Text_Sender_Green_Top_Dark@3x.png", "右深中.png": "ChatRoom_Bubble_Text_Sender_Green_Middle_Dark@3x.png", "右深下.png": "ChatRoom_Bubble_Text_Sender_Green_End_Dark@3x.png", "浅文件.png": "ChatRoom_Bubble_App_Sender@3x.png", "浅文件上.png": "ChatRoom_Bubble_App_Sender_Top@3x.png", "浅文件中.png": "ChatRoom_Bubble_App_Sender_Middle@3x.png", "浅文件下.png": "ChatRoom_Bubble_App_Sender_End@3x.png", "深文件.png": "ChatRoom_Bubble_App_Sender_Dark@3x.png", "深文件上.png": "ChatRoom_Bubble_App_Sender_Top_Dark@3x.png", "深文件中.png": "ChatRoom_Bubble_App_Sender_Middle_Dark@3x.png", "深文件下.png": "ChatRoom_Bubble_App_Sender_End_Dark@3x.png", "左浅红包.png": "ChatRoom_Bubble_HB_Receiver@3x.png", "左深红包.png": "ChatRoom_Bubble_HB_Receiver_Dark@3x.png", "左浅红包接收.png": "ChatRoom_Bubble_HB_Receiver_Handled@3x.png", "左深红包接收.png": "ChatRoom_Bubble_HB_Receiver_Handled_Dark@3x.png", "左浅红包过期.png": "ChatRoom_Bubble_HB_Overtime_Receiver@3x.png", "左深红包过期.png": "ChatRoom_Bubble_HB_Overtime_Receiver_Dark@3x.png", "右浅红包.png": "ChatRoom_Bubble_HB_Sender@3x.png", "右深红包.png": "ChatRoom_Bubble_HB_Sender_Dark@3x.png", "右浅红包接收.png": "ChatRoom_Bubble_HB_Sender_Handled@3x.png", "右深红包接收.png": "ChatRoom_Bubble_HB_Sender_Handled_Dark@3x.png", "右浅红包过期.png": "ChatRoom_Bubble_HB_Overtime_Sender@3x.png", "右深红包过期.png": "ChatRoom_Bubble_HB_Overtime_Sender_Dark@3x.png", "左浅AA.png": "ChatRoom_Bubble_AA_Receiver@3x.png", "左深AA.png": "ChatRoom_Bubble_AA_Receiver_Dark@3x.png", "左浅AA接收.png": "ChatRoom_Bubble_AA_Receiver_Handled@3x.png", "左深AA接收.png": "ChatRoom_Bubble_AA_Receiver_Handled_Dark@3x.png", "左浅AA过期.png": "ChatRoom_Bubble_AA_Overtime_Receiver@3x.png", "左深AA过期.png": "ChatRoom_Bubble_AA_Overtime_Receiver_Dark@3x.png", "右浅AA.png": "ChatRoom_Bubble_AA_Sender@3x.png", "右深AA.png": "ChatRoom_Bubble_AA_Sender_Dark@3x.png", "右浅AA接收.png": "ChatRoom_Bubble_AA_Sender_Handled@3x.png", "右深AA接收.png": "ChatRoom_Bubble_AA_Sender_Handled_Dark@3x.png", "右浅AA过期.png": "ChatRoom_Bubble_AA_Overtime_Sender@3x.png", "右深AA过期.png": "ChatRoom_Bubble_AA_Overtime_Sender_Dark@3x.png"};
-let items=[];
-const $=s=>document.querySelector(s), list=$("#list"), toast=$("#toast");
+const RULES={"左浅.png": "ChatRoom_Bubble_Text_Receiver_White@3x.png", "左浅上.png": "ChatRoom_Bubble_Text_Receiver_White_Top@3x.png", "左浅中.png": "ChatRoom_Bubble_Text_Receiver_White_Middle@3x.png", "左浅下.png": "ChatRoom_Bubble_Text_Receiver_White_End@3x.png", "左深.png": "ChatRoom_Bubble_Text_Receiver_Dark@3x.png", "左深上.png": "ChatRoom_Bubble_Text_Receiver_Dark_Top@3x.png", "左深中.png": "ChatRoom_Bubble_Text_Receiver_Dark_Middle@3x.png", "左深下.png": "ChatRoom_Bubble_Text_Receiver_Dark_End@3x.png", "右浅.png": "ChatRoom_Bubble_Text_Sender_Green@3x.png", "右浅上.png": "ChatRoom_Bubble_Text_Sender_Green_Top@3x.png", "右浅中.png": "ChatRoom_Bubble_Text_Sender_Green_Middle@3x.png", "右浅下.png": "ChatRoom_Bubble_Text_Sender_Green_End@3x.png", "右深.png": "ChatRoom_Bubble_Text_Sender_Green_Dark@3x.png", "右深上.png": "ChatRoom_Bubble_Text_Sender_Green_Top_Dark@3x.png", "右深中.png": "ChatRoom_Bubble_Text_Sender_Green_Middle_Dark@3x.png", "右深下.png": "ChatRoom_Bubble_Text_Sender_Green_End_Dark@3x.png", "浅文件.png": "ChatRoom_Bubble_App_Sender@3x.png", "浅文件上.png": "ChatRoom_Bubble_App_Sender_Top@3x.png", "浅文件中.png": "ChatRoom_Bubble_App_Sender_Middle@3x.png", "浅文件下.png": "ChatRoom_Bubble_App_Sender_End@3x.png", "深文件.png": "ChatRoom_Bubble_App_Sender_Dark@3x.png", "深文件上.png": "ChatRoom_Bubble_App_Sender_Top_Dark@3x.png", "深文件中.png": "ChatRoom_Bubble_App_Sender_Middle_Dark@3x.png", "深文件下.png": "ChatRoom_Bubble_App_Sender_End_Dark@3x.png", "左浅红包.png": "ChatRoom_Bubble_HB_Receiver@3x.png", "左深红包.png": "ChatRoom_Bubble_HB_Receiver_Dark@3x.png", "左浅红包接收.png": "ChatRoom_Bubble_HB_Receiver_Handled@3x.png", "左深红包接收.png": "ChatRoom_Bubble_HB_Receiver_Handled_Dark@3x.png", "左浅红包过期.png": "ChatRoom_Bubble_HB_Overtime_Receiver@3x.png", "左深红包过期.png": "ChatRoom_Bubble_HB_Overtime_Receiver_Dark@3x.png", "右浅红包.png": "ChatRoom_Bubble_HB_Sender@3x.png", "右深红包.png": "ChatRoom_Bubble_HB_Sender_Dark@3x.png", "右浅红包接收.png": "ChatRoom_Bubble_HB_Sender_Handled@3x.png", "右深红包接收.png": "ChatRoom_Bubble_HB_Sender_Handled_Dark@3x.png", "右浅红包过期.png": "ChatRoom_Bubble_HB_Overtime_Sender@3x.png", "右深红包过期.png": "ChatRoom_Bubble_HB_Overtime_Sender_Dark@3x.png", "左浅AA.png": "ChatRoom_Bubble_AA_Receiver@3x.png", "左深AA.png": "ChatRoom_Bubble_AA_Receiver_Dark@3x.png", "左浅AA接收.png": "ChatRoom_Bubble_AA_Receiver_Handled@3x.png", "左深AA接收.png": "ChatRoom_Bubble_AA_Receiver_Handled_Dark@3x.png", "左浅AA过期.png": "ChatRoom_Bubble_AA_Overtime_Receiver@3x.png", "左深AA过期.png": "ChatRoom_Bubble_AA_Overtime_Receiver_Dark@3x.png", "右浅AA.png": "ChatRoom_Bubble_AA_Sender@3x.png", "右深AA.png": "ChatRoom_Bubble_AA_Sender_Dark@3x.png", "右浅AA接收.png": "ChatRoom_Bubble_AA_Sender_Handled@3x.png", "右深AA接收.png": "ChatRoom_Bubble_AA_Sender_Handled_Dark@3x.png", "右浅AA过期.png": "ChatRoom_Bubble_AA_Overtime_Sender@3x.png", "右深AA过期.png": "ChatRoom_Bubble_AA_Overtime_Sender_Dark@3x.png"};
+const $=s=>document.querySelector(s);
+const toast=$("#toast");
 function showToast(t){toast.textContent=t;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1800)}
+
+/* Tabs */
+document.querySelectorAll(".tab").forEach(btn=>btn.onclick=()=>{
+ document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===btn));
+ document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id===btn.dataset.tab));
+});
+
+/* Bubble maker */
+const makerState={
+ current:"left",
+ left:{file:null,url:"",top:24,right:24,bottom:24,left:24},
+ right:{file:null,url:"",top:24,right:24,bottom:24,left:24}
+};
+const fields=["top","right","bottom","left"];
+function currentBubble(){return makerState[makerState.current]}
+function syncMakerUI(){
+ const s=currentBubble();
+ document.querySelectorAll("[data-side]").forEach(b=>b.classList.toggle("active",b.dataset.side===makerState.current));
+ $("#previewWrap").classList.toggle("right",makerState.current==="right");
+ if(s.url){$("#makerImage").src=s.url;$("#makerImage").hidden=false;$("#makerPlaceholder").hidden=true}
+ else{$("#makerImage").hidden=true;$("#makerPlaceholder").hidden=false;$("#makerPlaceholder").textContent=`当前未上传${makerState.current==="left"?"左":"右"}气泡`}
+ fields.forEach(k=>{$(`#${k}Num`).value=s[k];$(`#${k}Range`).value=s[k]});
+ updatePreview();updateSummary();
+}
+function updateSummary(){
+ const l=makerState.left,r=makerState.right;
+ $("#makerSummary").innerHTML=`<b>左气泡：</b>${l.file?escapeHtml(l.file.name):"未上传"}<br><b>右气泡：</b>${r.file?escapeHtml(r.file.name):"未上传"}`;
+ $("#exportMaker").disabled=!(l.file||r.file);
+}
+function updatePreview(){
+ const s=currentBubble(),p=$("#bubblePreview");
+ p.style.width=$("#previewWidth").value+"px";
+ if(!s.url){p.style.borderImageSource="none";p.style.background="rgba(118,118,128,.15)";p.style.borderWidth="0";return}
+ p.style.background="transparent";
+ p.style.borderImageSource=`url("${s.url}")`;
+ p.style.borderImageSlice=`${s.top} ${s.right} ${s.bottom} ${s.left} fill`;
+ p.style.borderImageWidth=`${s.top}px ${s.right}px ${s.bottom}px ${s.left}px`;
+ p.style.borderWidth=`${s.top}px ${s.right}px ${s.bottom}px ${s.left}px`;
+}
+document.querySelectorAll("[data-side]").forEach(b=>b.onclick=()=>{makerState.current=b.dataset.side;syncMakerUI()});
+$("#makerFile").onchange=e=>{
+ const file=e.target.files[0];if(!file)return;
+ const s=currentBubble();if(s.url)URL.revokeObjectURL(s.url);
+ s.file=file;s.url=URL.createObjectURL(file);syncMakerUI();showToast("气泡素材已载入");
+};
+fields.forEach(k=>{
+ const n=$(`#${k}Num`),r=$(`#${k}Range`);
+ const apply=v=>{currentBubble()[k]=Math.max(0,Number(v)||0);n.value=currentBubble()[k];r.value=currentBubble()[k];updatePreview()};
+ n.oninput=e=>apply(e.target.value);r.oninput=e=>apply(e.target.value);
+});
+$("#previewWidth").oninput=updatePreview;
+$("#resetSlices").onclick=()=>{Object.assign(currentBubble(),{top:24,right:24,bottom:24,left:24});syncMakerUI()};
+$("#exportMaker").onclick=async()=>{
+ const zip=new JSZip();
+ for(const side of ["left","right"]){
+   const s=makerState[side];
+   if(s.file){const ext=(s.file.name.match(/\.[^.]+$/)||[".png"])[0];zip.file(`${side}${ext}`,s.file)}
+ }
+ zip.file("bubble-config.json",JSON.stringify({
+   version:1,
+   unit:"px",
+   left:{top:makerState.left.top,right:makerState.left.right,bottom:makerState.left.bottom,left:makerState.left.left,asset:makerState.left.file?`left${(makerState.left.file.name.match(/\.[^.]+$/)||[".png"])[0]}`:null},
+   right:{top:makerState.right.top,right:makerState.right.right,bottom:makerState.right.bottom,left:makerState.right.left,asset:makerState.right.file?`right${(makerState.right.file.name.match(/\.[^.]+$/)||[".png"])[0]}`:null}
+ },null,2));
+ const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE"});
+ downloadBlob(blob,"ThemeLab_bubble_maker.zip");showToast("气泡制作 ZIP 已生成");
+};
+
+/* Batch renamer */
+let items=[];
+const list=$("#list");
 function ext(n){const m=n.match(/(\.[^.]+)$/);return m?m[1]:""}
 function cleanBase(n){return n.split("/").pop()}
 function targetName(name){
  const base=cleanBase(name);
  if(RULES[base]) return {name:RULES[base],matched:true};
  const noext=base.replace(/\.[^.]+$/,"");
- for(const [k,v] of Object.entries(RULES)){
-   if(k.replace(/\.[^.]+$/,"")===noext) return {name:v.replace(/\.png$/i,ext(base)||".png"),matched:true};
- }
- if(/^ChatRoom_Bubble_/i.test(base)) return {name:base,matched:true};
- return {name:base,matched:false};
+ for(const [k,v] of Object.entries(RULES)){if(k.replace(/\.[^.]+$/,"")===noext)return{name:v.replace(/\.png$/i,ext(base)||".png"),matched:true}}
+ if(/^ChatRoom_Bubble_/i.test(base))return{name:base,matched:true};
+ return{name:base,matched:false};
 }
 async function addFiles(fileList){
- const incoming=[...fileList];
- for(const file of incoming){
+ for(const file of [...fileList]){
    const lower=file.name.toLowerCase();
    if(lower.endsWith(".zip")){
      try{
        const z=await JSZip.loadAsync(file);
        const entries=Object.values(z.files).filter(e=>{
-         const path=e.name.replace(/\\/g,"/");
-         const base=path.split("/").pop()||"";
-         return !e.dir
-           && /\.(png|webp)$/i.test(base)
-           && !path.includes("__MACOSX/")
-           && !base.startsWith("._")
-           && base!==".DS_Store";
+         const path=e.name.replace(/\\/g,"/"),base=path.split("/").pop()||"";
+         return !e.dir&&/\.(png|webp)$/i.test(base)&&!path.includes("__MACOSX/")&&!base.startsWith("._")&&base!==".DS_Store";
        });
-       for(const e of entries){
-         const blob=await e.async("blob");
-         const name=cleanBase(e.name);
-         items.push(makeItem(new File([blob],name,{type:blob.type||"image/png"}),e.name));
-       }
+       for(const e of entries){const blob=await e.async("blob"),name=cleanBase(e.name);items.push(makeItem(new File([blob],name,{type:blob.type||"image/png"}),e.name))}
      }catch(err){showToast("ZIP 读取失败")}
-   }else if(/\.(png|webp)$/i.test(lower)
-      && !file.name.startsWith("._")
-      && file.name!==".DS_Store"
-      && !(file.webkitRelativePath||"").includes("__MACOSX/")){
-     items.push(makeItem(file,file.webkitRelativePath||file.name))
+   }else if(/\.(png|webp)$/i.test(lower)&&!file.name.startsWith("._")&&file.name!==".DS_Store"&&!(file.webkitRelativePath||"").includes("__MACOSX/")){
+     items.push(makeItem(file,file.webkitRelativePath||file.name));
    }
  }
  dedupe();render();
 }
-function makeItem(file,path){
- const t=targetName(file.name);
- return {file,path,old:file.name,newName:t.name,matched:t.matched,url:URL.createObjectURL(file)};
-}
-function dedupe(){
- const seen=new Set();items=items.filter(x=>{const k=x.path+"|"+x.file.size;if(seen.has(k))return false;seen.add(k);return true});
-}
+function makeItem(file,path){const t=targetName(file.name);return{file,path,old:file.name,newName:t.name,matched:t.matched,url:URL.createObjectURL(file)}}
+function dedupe(){const seen=new Set();items=items.filter(x=>{const k=x.path+"|"+x.file.size;if(seen.has(k))return false;seen.add(k);return true})}
 function render(){
- $("#total").textContent=items.length;
- $("#matched").textContent=items.filter(x=>x.matched).length;
- $("#unmatched").textContent=items.filter(x=>!x.matched).length;
- $("#download").disabled=!items.length;
+ $("#total").textContent=items.length;$("#matched").textContent=items.filter(x=>x.matched).length;$("#unmatched").textContent=items.filter(x=>!x.matched).length;$("#download").disabled=!items.length;
  if(!items.length){list.innerHTML='<div class="empty">添加素材后，这里会显示原文件名和新文件名。</div>';return}
- list.innerHTML=items.map((x,i)=>`<div class="row"><img class="thumb" src="${x.url}" alt=""><div class="names"><div class="old">${esc(x.old)}</div><div class="new">${esc(x.newName)}</div></div><span class="status ${x.matched?"ok":"warn"}">${x.matched?"已匹配":"原名保留"}</span></div>`).join("");
+ list.innerHTML=items.map(x=>`<div class="row"><img class="thumb" src="${x.url}" alt=""><div class="names"><div class="old">${escapeHtml(x.old)}</div><div class="new">${escapeHtml(x.newName)}</div></div><span class="status ${x.matched?"ok":"warn"}">${x.matched?"已匹配":"原名保留"}</span></div>`).join("");
 }
-function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-$("#files").onchange=e=>addFiles(e.target.files);
-$("#folder").onchange=e=>addFiles(e.target.files);
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function downloadBlob(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000)}
+$("#files").onchange=e=>addFiles(e.target.files);$("#folder").onchange=e=>addFiles(e.target.files);
 $("#clear").onclick=()=>{items.forEach(x=>URL.revokeObjectURL(x.url));items=[];render()};
 $("#download").onclick=async()=>{
- const zip=new JSZip();const used=new Map();
- for(const x of items){
-   let name=x.newName;
-   const count=used.get(name)||0;used.set(name,count+1);
-   if(count){const e=ext(name),b=name.slice(0,-e.length);name=`${b}_${count+1}${e}`}
-   zip.file(name,x.file);
- }
- showToast("正在生成 ZIP…");
- const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE"});
- const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="微信气泡_已重命名.zip";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
- showToast("ZIP 已生成");
+ const zip=new JSZip(),used=new Map();
+ for(const x of items){let name=x.newName,count=used.get(name)||0;used.set(name,count+1);if(count){const e=ext(name),b=name.slice(0,-e.length);name=`${b}_${count+1}${e}`}zip.file(name,x.file)}
+ const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE"});downloadBlob(blob,"微信气泡_已重命名.zip");showToast("ZIP 已生成");
 };
 const drop=$("#drop");
 ["dragenter","dragover"].forEach(n=>drop.addEventListener(n,e=>{e.preventDefault();drop.classList.add("drag")}));
 ["dragleave","drop"].forEach(n=>drop.addEventListener(n,e=>{e.preventDefault();drop.classList.remove("drag")}));
 drop.addEventListener("drop",e=>addFiles(e.dataTransfer.files));
-render();
+syncMakerUI();render();
 </script>
 </body></html>
