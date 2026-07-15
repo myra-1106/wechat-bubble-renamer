@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f2f2f7">
+<title>微信气泡一键命名</title>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<style>
+:root{color-scheme:light dark;--bg:#f2f2f7;--card:rgba(255,255,255,.78);--text:#111114;--sub:#6e6e73;--line:rgba(60,60,67,.14);--blue:#0a84ff;--green:#34c759;--red:#ff3b30;--shadow:0 18px 60px rgba(0,0,0,.12)}
+@media(prefers-color-scheme:dark){:root{--bg:#000;--card:rgba(28,28,30,.82);--text:#f5f5f7;--sub:#98989d;--line:rgba(255,255,255,.12);--shadow:0 18px 60px rgba(0,0,0,.45)}}
+*{box-sizing:border-box}body{margin:0;background:
+radial-gradient(circle at 15% 5%,rgba(10,132,255,.18),transparent 28%),
+radial-gradient(circle at 90% 15%,rgba(175,82,222,.14),transparent 25%),var(--bg);
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC",sans-serif;color:var(--text);min-height:100vh}
+.shell{width:min(920px,100%);margin:auto;padding:calc(20px + env(safe-area-inset-top)) 16px calc(32px + env(safe-area-inset-bottom))}
+.header{display:flex;justify-content:space-between;align-items:flex-start;margin:10px 4px 18px}.header h1{font-size:34px;letter-spacing:-1.2px;margin:0 0 6px}.header p{margin:0;color:var(--sub);font-size:15px}
+.badge{padding:8px 11px;border-radius:999px;background:rgba(52,199,89,.14);color:var(--green);font-weight:700;font-size:12px}
+.card{background:var(--card);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);overflow:hidden}
+.drop{margin:0;padding:28px 20px;text-align:center;border:1.5px dashed rgba(10,132,255,.45);border-radius:22px;background:rgba(10,132,255,.06);transition:.2s}.drop.drag{transform:scale(.99);background:rgba(10,132,255,.14)}
+.icon{width:58px;height:58px;border-radius:18px;background:linear-gradient(145deg,#2f9bff,#0066d6);margin:0 auto 14px;display:grid;place-items:center;color:white;font-size:28px;box-shadow:0 10px 24px rgba(10,132,255,.28)}
+.drop h2{font-size:20px;margin:0 0 7px}.drop p{font-size:14px;color:var(--sub);margin:0 0 18px}
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.btn{appearance:none;border:0;border-radius:14px;padding:12px 17px;font-weight:700;font-size:15px;background:#e5e5ea;color:#111;cursor:pointer}.btn.primary{background:var(--blue);color:#fff}.btn.dark{background:#1c1c1e;color:#fff}.btn:disabled{opacity:.38;cursor:not-allowed}
+input[type=file]{display:none}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.stat{padding:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;text-align:center}.stat b{display:block;font-size:23px}.stat span{font-size:12px;color:var(--sub)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}.toolbar h3{margin:0;font-size:17px}.toolbar button{border:0;background:none;color:var(--red);font-size:14px;font-weight:600}
+.empty{padding:42px 18px;text-align:center;color:var(--sub)}
+.list{max-height:52vh;overflow:auto}.row{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}
+.thumb{width:52px;height:52px;object-fit:contain;border-radius:13px;background:rgba(120,120,128,.09)}
+.names{min-width:0}.old{font-size:13px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.new{font-size:14px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+.status{font-size:11px;font-weight:750;padding:6px 8px;border-radius:999px}.ok{background:rgba(52,199,89,.14);color:var(--green)}.warn{background:rgba(255,149,0,.14);color:#ff9500}
+.footer{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--card);backdrop-filter:blur(25px)}.footer .btn{flex:1}
+.note{font-size:12px;color:var(--sub);text-align:center;margin:14px 18px 0;line-height:1.5}
+.toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:#1c1c1e;color:#fff;padding:11px 16px;border-radius:999px;font-size:13px;transition:.25s;pointer-events:none;z-index:9}.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<main class="shell">
+<header class="header"><div><h1>微信气泡一键命名</h1><p>PNG、WebP、ZIP 本地处理，不上传服务器</p></div><span class="badge">iOS</span></header>
+<section class="card" style="padding:12px">
+<div id="drop" class="drop">
+<div class="icon">⇧</div><h2>添加气泡素材</h2><p>选择图片、ZIP，或一次导入整个文件夹</p>
+<div class="actions">
+<label class="btn primary" for="files">选择文件</label>
+<label class="btn" for="folder">选择文件夹</label>
+<input id="files" type="file" multiple accept=".png,.webp,.zip">
+<input id="folder" type="file" multiple webkitdirectory directory>
+</div></div></section>
+<section class="stats"><div class="stat"><b id="total">0</b><span>文件总数</span></div><div class="stat"><b id="matched">0</b><span>已匹配</span></div><div class="stat"><b id="unmatched">0</b><span>待确认</span></div></section>
+<section class="card">
+<div class="toolbar"><h3>命名预览</h3><button id="clear">清空</button></div>
+<div id="list" class="list"><div class="empty">添加素材后，这里会显示原文件名和新文件名。</div></div>
+<div class="footer"><button id="download" class="btn dark" disabled>下载重命名 ZIP</button></div>
+</section>
+<p class="note">ZIP 解压和重新压缩均在你的浏览器中完成。官方命名已匹配文字、文件、红包和 AA 气泡。</p>
+</main><div id="toast" class="toast"></div>
+<script>
+const RULES={"左浅.png": "ChatRoom_Bubble_Text_Receiver_White@3x.png", "左浅上.png": "ChatRoom_Bubble_Text_Receiver_White_Top@3x.png", "左浅中.png": "ChatRoom_Bubble_Text_Receiver_White_Middle@3x.png", "左浅下.png": "ChatRoom_Bubble_Text_Receiver_White_End@3x.png", "左深.png": "ChatRoom_Bubble_Text_Receiver_Dark@3x.png", "左深上.png": "ChatRoom_Bubble_Text_Receiver_Dark_Top@3x.png", "左深中.png": "ChatRoom_Bubble_Text_Receiver_Dark_Middle@3x.png", "左深下.png": "ChatRoom_Bubble_Text_Receiver_Dark_End@3x.png", "右浅.png": "ChatRoom_Bubble_Text_Sender_Green@3x.png", "右浅上.png": "ChatRoom_Bubble_Text_Sender_Green_Top@3x.png", "右浅中.png": "ChatRoom_Bubble_Text_Sender_Green_Middle@3x.png", "右浅下.png": "ChatRoom_Bubble_Text_Sender_Green_End@3x.png", "右深.png": "ChatRoom_Bubble_Text_Sender_Green_Dark@3x.png", "右深上.png": "ChatRoom_Bubble_Text_Sender_Green_Top_Dark@3x.png", "右深中.png": "ChatRoom_Bubble_Text_Sender_Green_Middle_Dark@3x.png", "右深下.png": "ChatRoom_Bubble_Text_Sender_Green_End_Dark@3x.png", "浅文件.png": "ChatRoom_Bubble_App_Sender@3x.png", "浅文件上.png": "ChatRoom_Bubble_App_Sender_Top@3x.png", "浅文件中.png": "ChatRoom_Bubble_App_Sender_Middle@3x.png", "浅文件下.png": "ChatRoom_Bubble_App_Sender_End@3x.png", "深文件.png": "ChatRoom_Bubble_App_Sender_Dark@3x.png", "深文件上.png": "ChatRoom_Bubble_App_Sender_Top_Dark@3x.png", "深文件中.png": "ChatRoom_Bubble_App_Sender_Middle_Dark@3x.png", "深文件下.png": "ChatRoom_Bubble_App_Sender_End_Dark@3x.png", "左浅红包.png": "ChatRoom_Bubble_HB_Receiver@3x.png", "左深红包.png": "ChatRoom_Bubble_HB_Receiver_Dark@3x.png", "左浅红包接收.png": "ChatRoom_Bubble_HB_Receiver_Handled@3x.png", "左深红包接收.png": "ChatRoom_Bubble_HB_Receiver_Handled_Dark@3x.png", "左浅红包过期.png": "ChatRoom_Bubble_HB_Overtime_Receiver@3x.png", "左深红包过期.png": "ChatRoom_Bubble_HB_Overtime_Receiver_Dark@3x.png", "右浅红包.png": "ChatRoom_Bubble_HB_Sender@3x.png", "右深红包.png": "ChatRoom_Bubble_HB_Sender_Dark@3x.png", "右浅红包接收.png": "ChatRoom_Bubble_HB_Sender_Handled@3x.png", "右深红包接收.png": "ChatRoom_Bubble_HB_Sender_Handled_Dark@3x.png", "右浅红包过期.png": "ChatRoom_Bubble_HB_Overtime_Sender@3x.png", "右深红包过期.png": "ChatRoom_Bubble_HB_Overtime_Sender_Dark@3x.png", "左浅AA.png": "ChatRoom_Bubble_AA_Receiver@3x.png", "左深AA.png": "ChatRoom_Bubble_AA_Receiver_Dark@3x.png", "左浅AA接收.png": "ChatRoom_Bubble_AA_Receiver_Handled@3x.png", "左深AA接收.png": "ChatRoom_Bubble_AA_Receiver_Handled_Dark@3x.png", "左浅AA过期.png": "ChatRoom_Bubble_AA_Overtime_Receiver@3x.png", "左深AA过期.png": "ChatRoom_Bubble_AA_Overtime_Receiver_Dark@3x.png", "右浅AA.png": "ChatRoom_Bubble_AA_Sender@3x.png", "右深AA.png": "ChatRoom_Bubble_AA_Sender_Dark@3x.png", "右浅AA接收.png": "ChatRoom_Bubble_AA_Sender_Handled@3x.png", "右深AA接收.png": "ChatRoom_Bubble_AA_Sender_Handled_Dark@3x.png", "右浅AA过期.png": "ChatRoom_Bubble_AA_Overtime_Sender@3x.png", "右深AA过期.png": "ChatRoom_Bubble_AA_Overtime_Sender_Dark@3x.png"};
+let items=[];
+const $=s=>document.querySelector(s), list=$("#list"), toast=$("#toast");
+function showToast(t){toast.textContent=t;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1800)}
+function ext(n){const m=n.match(/(\.[^.]+)$/);return m?m[1]:""}
+function cleanBase(n){return n.split("/").pop()}
+function targetName(name){
+ const base=cleanBase(name);
+ if(RULES[base]) return {name:RULES[base],matched:true};
+ const noext=base.replace(/\.[^.]+$/,"");
+ for(const [k,v] of Object.entries(RULES)){
+   if(k.replace(/\.[^.]+$/,"")===noext) return {name:v.replace(/\.png$/i,ext(base)||".png"),matched:true};
+ }
+ if(/^ChatRoom_Bubble_/i.test(base)) return {name:base,matched:true};
+ return {name:base,matched:false};
+}
+async function addFiles(fileList){
+ const incoming=[...fileList];
+ for(const file of incoming){
+   const lower=file.name.toLowerCase();
+   if(lower.endsWith(".zip")){
+     try{
+       const z=await JSZip.loadAsync(file);
+       const entries=Object.values(z.files).filter(e=>!e.dir && /\.(png|webp)$/i.test(e.name));
+       for(const e of entries){
+         const blob=await e.async("blob");
+         const name=cleanBase(e.name);
+         items.push(makeItem(new File([blob],name,{type:blob.type||"image/png"}),e.name));
+       }
+     }catch(err){showToast("ZIP 读取失败")}
+   }else if(/\.(png|webp)$/i.test(lower)){items.push(makeItem(file,file.webkitRelativePath||file.name))}
+ }
+ dedupe();render();
+}
+function makeItem(file,path){
+ const t=targetName(file.name);
+ return {file,path,old:file.name,newName:t.name,matched:t.matched,url:URL.createObjectURL(file)};
+}
+function dedupe(){
+ const seen=new Set();items=items.filter(x=>{const k=x.path+"|"+x.file.size;if(seen.has(k))return false;seen.add(k);return true});
+}
+function render(){
+ $("#total").textContent=items.length;
+ $("#matched").textContent=items.filter(x=>x.matched).length;
+ $("#unmatched").textContent=items.filter(x=>!x.matched).length;
+ $("#download").disabled=!items.length;
+ if(!items.length){list.innerHTML='<div class="empty">添加素材后，这里会显示原文件名和新文件名。</div>';return}
+ list.innerHTML=items.map((x,i)=>`<div class="row"><img class="thumb" src="${x.url}" alt=""><div class="names"><div class="old">${esc(x.old)}</div><div class="new">${esc(x.newName)}</div></div><span class="status ${x.matched?"ok":"warn"}">${x.matched?"已匹配":"原名保留"}</span></div>`).join("");
+}
+function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+$("#files").onchange=e=>addFiles(e.target.files);
+$("#folder").onchange=e=>addFiles(e.target.files);
+$("#clear").onclick=()=>{items.forEach(x=>URL.revokeObjectURL(x.url));items=[];render()};
+$("#download").onclick=async()=>{
+ const zip=new JSZip();const used=new Map();
+ for(const x of items){
+   let name=x.newName;
+   const count=used.get(name)||0;used.set(name,count+1);
+   if(count){const e=ext(name),b=name.slice(0,-e.length);name=`${b}_${count+1}${e}`}
+   zip.file(name,x.file);
+ }
+ showToast("正在生成 ZIP…");
+ const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="微信气泡_已重命名.zip";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+ showToast("ZIP 已生成");
+};
+const drop=$("#drop");
+["dragenter","dragover"].forEach(n=>drop.addEventListener(n,e=>{e.preventDefault();drop.classList.add("drag")}));
+["dragleave","drop"].forEach(n=>drop.addEventListener(n,e=>{e.preventDefault();drop.classList.remove("drag")}));
+drop.addEventListener("drop",e=>addFiles(e.dataTransfer.files));
+render();
+</script>
+</body></html>
