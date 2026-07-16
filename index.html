@@ -7,90 +7,97 @@
 <title>微信气泡制作器</title>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
-:root{color-scheme:light dark;--bg:#f2f2f7;--card:rgba(255,255,255,.84);--text:#111114;--sub:#6e6e73;--line:rgba(60,60,67,.14);--blue:#0a84ff;--green:#34c759;--orange:#ff9500;--red:#ff3b30;--shadow:0 18px 60px rgba(0,0,0,.11)}
-@media(prefers-color-scheme:dark){:root{--bg:#000;--card:rgba(28,28,30,.86);--text:#f5f5f7;--sub:#98989d;--line:rgba(255,255,255,.12);--shadow:0 18px 60px rgba(0,0,0,.45)}}
+:root{color-scheme:light dark;--bg:#f2f2f7;--card:rgba(255,255,255,.86);--text:#111114;--sub:#6e6e73;--line:rgba(60,60,67,.14);--blue:#0a84ff;--green:#34c759;--orange:#ff9500;--red:#ff3b30;--shadow:0 18px 60px rgba(0,0,0,.11)}
+@media(prefers-color-scheme:dark){:root{--bg:#000;--card:rgba(28,28,30,.88);--text:#f5f5f7;--sub:#98989d;--line:rgba(255,255,255,.12);--shadow:0 18px 60px rgba(0,0,0,.45)}}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC",sans-serif;background:radial-gradient(circle at 12% 3%,rgba(10,132,255,.18),transparent 27%),radial-gradient(circle at 91% 10%,rgba(175,82,222,.14),transparent 24%),var(--bg)}
-button,input{font:inherit}.shell{width:min(1040px,100%);margin:auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(34px + env(safe-area-inset-bottom))}
+button,input,select{font:inherit}.shell{width:min(1040px,100%);margin:auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(34px + env(safe-area-inset-bottom))}
 .header{display:flex;justify-content:space-between;align-items:flex-start;margin:10px 4px 14px}.header h1{font-size:34px;letter-spacing:-1.2px;margin:0 0 5px}.header p{margin:0;color:var(--sub);font-size:14px}.badge{padding:8px 11px;border-radius:999px;background:rgba(52,199,89,.14);color:var(--green);font-weight:750;font-size:12px}
 .card{background:var(--card);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);overflow:hidden}
 .tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin:0 0 14px;border-radius:16px;background:rgba(118,118,128,.13)}.tab{border:0;border-radius:13px;padding:11px 10px;background:transparent;color:var(--sub);font-weight:750}.tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 9px rgba(0,0,0,.09)}.panel{display:none}.panel.active{display:block}
-.section-title{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:18px 18px 0}.section-title h2{margin:0;font-size:20px}.section-title p{margin:4px 0 0;color:var(--sub);font-size:13px}
-.btn{appearance:none;border:0;border-radius:14px;padding:11px 15px;font-weight:750;font-size:14px;background:#e5e5ea;color:#111;cursor:pointer}.btn.primary{background:var(--blue);color:#fff}.btn.dark{background:#1c1c1e;color:#fff}.btn.red{background:rgba(255,59,48,.12);color:var(--red)}.btn:disabled{opacity:.38;cursor:not-allowed}
-.slot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:18px}@media(max-width:820px){.slot-grid{grid-template-columns:1fr 1fr}}.slot{border:1px solid var(--line);border-radius:20px;padding:12px;background:rgba(118,118,128,.06);position:relative}.slot.active{outline:2px solid var(--blue)}.slot-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.slot-title{font-weight:800}.slot-mode{font-size:11px;color:var(--sub)}.slot-preview{height:120px;border-radius:15px;background:rgba(118,118,128,.08);display:grid;place-items:center;overflow:hidden;margin-bottom:10px}.slot-preview img{width:100%;height:100%;object-fit:contain}.slot-empty{font-size:13px;color:var(--sub);text-align:center}.slot-actions{display:flex;gap:8px}.slot-actions .btn{flex:1;padding:9px 8px;font-size:12px}
-.workspace{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);gap:14px;margin-top:14px}@media(max-width:820px){.workspace{grid-template-columns:1fr}}
-.editor{padding:18px}.editor h3,.preview-card h3,.checks h3{margin:0 0 4px}.sub{color:var(--sub);font-size:13px;margin:0 0 14px}
-.canvas-wrap{position:relative;min-height:320px;border-radius:20px;background:linear-gradient(180deg,rgba(10,132,255,.07),rgba(118,118,128,.05));overflow:hidden;display:grid;place-items:center;padding:18px;touch-action:none}.canvas-stage{position:relative;max-width:100%;max-height:300px;display:inline-block}.canvas-stage img{display:block;max-width:100%;max-height:280px;object-fit:contain}.guide{position:absolute;background:var(--blue);z-index:3;box-shadow:0 0 0 1px rgba(255,255,255,.75)}.guide.v{top:0;bottom:0;width:2px;cursor:ew-resize}.guide.h{left:0;right:0;height:2px;cursor:ns-resize}.guide::after{content:"";position:absolute;background:rgba(10,132,255,.18)}.guide.v::after{top:0;bottom:0;left:-9px;width:20px}.guide.h::after{left:0;right:0;top:-9px;height:20px}.zone{position:absolute;pointer-events:none;background:rgba(52,199,89,.10);border:1px dashed rgba(52,199,89,.55)}
-.tip{margin-top:10px;color:var(--sub);font-size:12px;line-height:1.5}
-.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}@media(max-width:620px){.controls{grid-template-columns:1fr 1fr}}.control{background:rgba(118,118,128,.08);padding:11px;border-radius:15px}.control label{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:750;margin-bottom:8px}.control input[type=number]{width:62px;border:0;border-radius:9px;padding:7px;text-align:center;background:var(--card);color:var(--text)}.control input[type=range]{width:100%}
-.inline-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.inline-actions .btn{flex:1}
-.preview-card{padding:18px}.preview-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:rgba(118,118,128,.14);margin-bottom:12px}.preview-switch button{border:0;background:transparent;padding:9px;border-radius:11px;color:var(--sub);font-weight:750}.preview-switch button.active{background:var(--card);color:var(--text)}
-.chat{border-radius:20px;padding:18px;min-height:370px;transition:.2s}.chat.light{background:#f2f2f7}.chat.dark{background:#0b0b0c}.message-row{display:flex;margin:14px 0}.message-row.right{justify-content:flex-end}.bubble{max-width:82%;min-width:72px;padding:15px 18px;line-height:1.42;font-size:14px;color:#111;border-style:solid;border-color:transparent;background-clip:padding-box}.chat.dark .bubble{color:#fff}.length-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}.length-tabs button{border:0;border-radius:11px;padding:8px 4px;background:rgba(118,118,128,.10);color:var(--sub);font-size:12px}.length-tabs button.active{background:rgba(10,132,255,.14);color:var(--blue);font-weight:750}
-.checks{margin-top:14px;padding:18px}.check-list{display:grid;gap:8px}.check{display:flex;align-items:flex-start;gap:9px;padding:11px 12px;border-radius:14px;background:rgba(118,118,128,.07);font-size:13px}.dot{width:9px;height:9px;border-radius:50%;margin-top:4px;flex:0 0 auto}.dot.ok{background:var(--green)}.dot.warn{background:var(--orange)}.dot.err{background:var(--red)}.check small{display:block;color:var(--sub);margin-top:3px;line-height:1.4}
-.history{margin-top:14px;padding:18px}.history-list{display:grid;gap:8px}.history-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 12px;border-radius:14px;background:rgba(118,118,128,.07)}.history-item b{font-size:13px}.history-item small{color:var(--sub)}
-.export-bar{display:flex;gap:10px;margin-top:14px}.export-bar .btn{flex:1}
-.drop{padding:28px 20px;text-align:center;border:1.5px dashed rgba(10,132,255,.45);border-radius:22px;background:rgba(10,132,255,.06)}input[type=file]{display:none}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.stat{padding:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;text-align:center}.stat b{display:block;font-size:23px}.stat span{font-size:12px;color:var(--sub)}.toolbar{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}.toolbar h3{margin:0}.toolbar button{border:0;background:none;color:var(--red)}.empty{padding:42px 18px;text-align:center;color:var(--sub)}.list{max-height:52vh;overflow:auto}.row{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}.thumb{width:52px;height:52px;object-fit:contain;border-radius:13px;background:rgba(120,120,128,.09)}.names{min-width:0}.old{font-size:13px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.new{font-size:14px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}.status{font-size:11px;font-weight:750;padding:6px 8px;border-radius:999px}.oktag{background:rgba(52,199,89,.14);color:var(--green)}.warntag{background:rgba(255,149,0,.14);color:var(--orange)}.footer{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line)}.footer .btn{flex:1}
+.btn{appearance:none;border:0;border-radius:14px;padding:11px 15px;font-weight:750;font-size:14px;background:#e5e5ea;color:#111;cursor:pointer}.btn.primary{background:var(--blue);color:#fff}.btn.dark{background:#1c1c1e;color:#fff}.btn.red{background:rgba(255,59,48,.12);color:var(--red)}.btn:disabled{opacity:.38;cursor:not-allowed}input[type=file]{display:none}
+.hero{padding:18px}.hero h2{margin:0 0 5px;font-size:22px}.hero p{margin:0 0 16px;color:var(--sub);font-size:13px}
+.upload{border:1.5px dashed rgba(10,132,255,.45);border-radius:22px;background:rgba(10,132,255,.06);padding:24px;text-align:center}.upload img{max-width:100%;max-height:210px;object-fit:contain;border-radius:16px;background:rgba(118,118,128,.07);display:block;margin:0 auto 14px}.upload-empty{height:150px;display:grid;place-items:center;color:var(--sub)}
+.statusline{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.pill{font-size:12px;padding:7px 10px;border-radius:999px;background:rgba(118,118,128,.10);color:var(--sub)}.pill.ok{background:rgba(52,199,89,.14);color:var(--green)}.pill.warn{background:rgba(255,149,0,.14);color:var(--orange)}
+.grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(310px,.92fr);gap:14px;margin-top:14px}@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.editor,.preview-card,.export-card{padding:18px}.editor h3,.preview-card h3,.export-card h3{margin:0 0 4px}.sub{margin:0 0 14px;color:var(--sub);font-size:13px;line-height:1.45}
+.segment{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:rgba(118,118,128,.14);margin-bottom:14px}.segment button{border:0;background:transparent;padding:10px;border-radius:11px;color:var(--sub);font-weight:750}.segment button.active{background:var(--card);color:var(--text)}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}.control{background:rgba(118,118,128,.08);padding:12px;border-radius:16px}.control label{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:750;margin-bottom:8px}.control input[type=range]{width:100%}.control input[type=number]{width:64px;border:0;border-radius:9px;padding:7px;text-align:center;background:var(--card);color:var(--text)}.control select,.control input[type=color]{width:100%;border:0;border-radius:10px;padding:8px;background:var(--card);color:var(--text)}
+.canvases{display:grid;grid-template-columns:1fr 1fr;gap:10px}.canvas-box{background:rgba(118,118,128,.06);border-radius:18px;padding:10px;text-align:center}.canvas-box b{display:block;font-size:13px;margin-bottom:8px}.canvas-box canvas{width:100%;height:150px;object-fit:contain;border-radius:12px;background:rgba(118,118,128,.07)}
+.preview-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:rgba(118,118,128,.14);margin-bottom:12px}.preview-switch button{border:0;background:transparent;padding:9px;border-radius:11px;color:var(--sub);font-weight:750}.preview-switch button.active{background:var(--card);color:var(--text)}
+.chat{border-radius:20px;padding:18px;min-height:390px;transition:.2s}.chat.light{background:#f2f2f7}.chat.dark{background:#0b0b0c}.message-row{display:flex;margin:16px 0}.message-row.right{justify-content:flex-end}.bubble-wrap{position:relative;max-width:82%}.bubble-canvas{position:absolute;inset:0;width:100%;height:100%}.bubble-text{position:relative;z-index:1;padding:16px 20px;font-size:14px;line-height:1.45;color:#111;min-width:110px}.chat.dark .bubble-text{color:#fff}
+.length-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}.length-tabs button{border:0;border-radius:11px;padding:8px 4px;background:rgba(118,118,128,.10);color:var(--sub);font-size:12px}.length-tabs button.active{background:rgba(10,132,255,.14);color:var(--blue);font-weight:750}
+.slice-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}@media(max-width:620px){.slice-grid{grid-template-columns:1fr 1fr}}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.actions .btn{flex:1}
+.output-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media(max-width:760px){.output-grid{grid-template-columns:1fr 1fr}}.out{background:rgba(118,118,128,.07);border-radius:17px;padding:10px;text-align:center}.out b{display:block;font-size:13px;margin-bottom:7px}.out canvas{width:100%;height:115px;background:rgba(118,118,128,.06);border-radius:11px}
+.checks{display:grid;gap:8px;margin-top:14px}.check{display:flex;gap:9px;padding:11px 12px;border-radius:14px;background:rgba(118,118,128,.07);font-size:13px}.dot{width:9px;height:9px;border-radius:50%;margin-top:4px}.dot.ok{background:var(--green)}.dot.warn{background:var(--orange)}.dot.err{background:var(--red)}
+.drop{padding:28px 20px;text-align:center;border:1.5px dashed rgba(10,132,255,.45);border-radius:22px;background:rgba(10,132,255,.06)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.stat{padding:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;text-align:center}.stat b{display:block;font-size:23px}.stat span{font-size:12px;color:var(--sub)}.toolbar{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}.toolbar h3{margin:0}.toolbar button{border:0;background:none;color:var(--red)}.empty{padding:42px 18px;text-align:center;color:var(--sub)}.list{max-height:52vh;overflow:auto}.row{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}.thumb{width:52px;height:52px;object-fit:contain;border-radius:13px;background:rgba(120,120,128,.09)}.names{min-width:0}.old{font-size:13px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.new{font-size:14px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}.tag{font-size:11px;font-weight:750;padding:6px 8px;border-radius:999px}.oktag{background:rgba(52,199,89,.14);color:var(--green)}.warntag{background:rgba(255,149,0,.14);color:var(--orange)}.footer{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line)}.footer .btn{flex:1}
 .toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;background:#1c1c1e;color:#fff;padding:11px 16px;border-radius:999px;font-size:13px;transition:.25s;pointer-events:none;z-index:9}.toast.show{opacity:1;transform:translate(-50%,0)}
 </style>
 </head>
 <body>
 <main class="shell">
-<header class="header"><div><h1>微信气泡制作器</h1><p>制作、预览、校验与导出</p></div><span class="badge">iOS</span></header>
+<header class="header"><div><h1>微信气泡制作器</h1><p>单图生成左右与暗黑版本</p></div><span class="badge">iOS</span></header>
 <nav class="tabs"><button class="tab active" data-tab="maker">气泡制作</button><button class="tab" data-tab="rename">批量命名</button></nav>
 
 <section id="maker" class="panel active">
-<div class="card">
-<div class="section-title"><div><h2>四种气泡素材</h2><p>左浅、左深、右浅、右深独立上传，参数可同步。</p></div><label class="btn" for="importZip">导入旧 ZIP</label><input id="importZip" type="file" accept=".zip"></div>
-<div class="slot-grid" id="slotGrid"></div>
+<div class="card hero">
+<h2>上传一张浅色气泡</h2><p>网站自动判断尖角方向，生成另一侧镜像，并用黑色克隆层合成暗黑版本。</p>
+<div class="upload">
+<div id="uploadEmpty" class="upload-empty">未上传气泡图片</div>
+<img id="sourcePreview" hidden alt="">
+<label class="btn primary" for="sourceFile">选择气泡图片</label>
+<input id="sourceFile" type="file" accept=".png,.webp,image/png,image/webp">
+</div>
+<div class="statusline"><span id="directionPill" class="pill">方向：等待检测</span><span id="confidencePill" class="pill">置信度：—</span><span id="alphaPill" class="pill">透明通道：—</span></div>
+<div class="actions"><button id="flipDirection" class="btn" disabled>交换左右</button><button id="clearSource" class="btn red" disabled>清空素材</button></div>
 </div>
 
-<div class="workspace">
+<div class="grid">
 <div class="card editor">
-<h3>切片辅助线</h3><p class="sub">拖动蓝色参考线，绿色区域是可拉伸区；数值自动吸附到整数像素。</p>
-<div id="canvasWrap" class="canvas-wrap">
-<div id="canvasEmpty" class="slot-empty">请先选择并上传一个气泡素材</div>
-<div id="canvasStage" class="canvas-stage" hidden>
-<img id="editImage" alt="">
-<div id="zone" class="zone"></div>
-<div class="guide v" data-guide="left"></div><div class="guide v" data-guide="right"></div>
-<div class="guide h" data-guide="top"></div><div class="guide h" data-guide="bottom"></div>
-</div></div>
+<h3>暗黑气泡合成</h3><p class="sub">原图作为底层，自动克隆一层着色后叠加；所有效果会写入最终 PNG。</p>
 <div class="controls">
-<div class="control"><label>Top <input id="topNum" type="number" min="0" max="500"></label><input id="topRange" type="range" min="0" max="500"></div>
-<div class="control"><label>Right <input id="rightNum" type="number" min="0" max="500"></label><input id="rightRange" type="range" min="0" max="500"></div>
-<div class="control"><label>Bottom <input id="bottomNum" type="number" min="0" max="500"></label><input id="bottomRange" type="range" min="0" max="500"></div>
-<div class="control"><label>Left <input id="leftNum" type="number" min="0" max="500"></label><input id="leftRange" type="range" min="0" max="500"></div>
+<div class="control"><label>混合模式</label><select id="blendMode">
+<option value="source-over">正常</option><option value="multiply" selected>正片叠底</option><option value="overlay">叠加</option><option value="soft-light">柔光</option><option value="darken">变暗</option><option value="color-burn">颜色加深</option><option value="hard-light">强光</option><option value="color">颜色</option>
+</select></div>
+<div class="control"><label>叠加颜色</label><input id="overlayColor" type="color" value="#000000"></div>
+<div class="control"><label>黑色层透明度 <span id="opacityVal">58%</span></label><input id="overlayOpacity" type="range" min="0" max="100" value="58"></div>
+<div class="control"><label>原图亮度 <span id="brightnessVal">82%</span></label><input id="brightness" type="range" min="20" max="140" value="82"></div>
+<div class="control"><label>对比度 <span id="contrastVal">108%</span></label><input id="contrast" type="range" min="40" max="180" value="108"></div>
+<div class="control"><label>饱和度 <span id="saturationVal">82%</span></label><input id="saturation" type="range" min="0" max="180" value="82"></div>
 </div>
-<div class="inline-actions">
-<button id="copyToDark" class="btn">复制到同侧暗黑</button>
-<button id="copyToLight" class="btn">复制到同侧浅色</button>
-<button id="copySameMode" class="btn">复制到另一侧</button>
-<button id="resetSlices" class="btn red">恢复默认</button>
+<div class="actions"><button id="resetDark" class="btn">恢复推荐值</button></div>
+
+<h3 style="margin-top:20px">九宫格切片</h3><p class="sub">四个数值控制不可拉伸边缘，Canvas 会按九宫格真实渲染。</p>
+<div class="slice-grid">
+<div class="control"><label>Top <input id="topNum" type="number" min="0" max="500" value="24"></label><input id="topRange" type="range" min="0" max="500" value="24"></div>
+<div class="control"><label>Right <input id="rightNum" type="number" min="0" max="500" value="24"></label><input id="rightRange" type="range" min="0" max="500" value="24"></div>
+<div class="control"><label>Bottom <input id="bottomNum" type="number" min="0" max="500" value="24"></label><input id="bottomRange" type="range" min="0" max="500" value="24"></div>
+<div class="control"><label>Left <input id="leftNum" type="number" min="0" max="500" value="24"></label><input id="leftRange" type="range" min="0" max="500" value="24"></div>
 </div>
-<p class="tip">双击任一辅助线可将该边恢复为 24px。手机拖动时会自动放大触点区域，参数始终以原图像素保存。</p>
+<div class="actions"><button id="resetSlices" class="btn">切片恢复 24px</button></div>
 </div>
 
 <div class="card preview-card">
-<h3>真实聊天预览</h3><p class="sub">一次检查短文本、双行、多行和表情压力场景。</p>
+<h3>真实聊天预览</h3><p class="sub">浅色和暗黑背景都使用 Canvas 九宫格绘制。</p>
 <div class="preview-switch"><button class="active" data-preview-mode="light">浅色背景</button><button data-preview-mode="dark">暗黑背景</button></div>
 <div id="chat" class="chat light">
-<div class="message-row"><div id="leftBubble" class="bubble">收到，我马上处理。</div></div>
-<div class="message-row right"><div id="rightBubble" class="bubble">好的，稍后把完整文件发给你。</div></div>
+<div class="message-row"><div class="bubble-wrap" id="leftWrap"><canvas class="bubble-canvas" id="leftCanvas"></canvas><div class="bubble-text" id="leftText">收到，我马上处理。</div></div></div>
+<div class="message-row right"><div class="bubble-wrap" id="rightWrap"><canvas class="bubble-canvas" id="rightCanvas"></canvas><div class="bubble-text" id="rightText">好的，稍后把完整文件发给你。</div></div></div>
 </div>
-<div class="length-tabs">
-<button class="active" data-length="short">短文字</button><button data-length="two">两行</button><button data-length="long">四行</button><button data-length="emoji">表情</button>
-</div>
+<div class="length-tabs"><button class="active" data-length="short">短文字</button><button data-length="two">两行</button><button data-length="long">四行</button><button data-length="emoji">表情</button></div>
 </div>
 </div>
 
-<div class="card checks">
-<h3>自动检测与导出校验</h3><p class="sub">方向识别是轮廓启发式建议；尺寸、透明通道与素材完整性会严格校验。</p>
-<div id="checkList" class="check-list"></div>
-<div class="export-bar"><button id="saveHistory" class="btn">保存当前版本</button><button id="exportMaker" class="btn dark">导出气泡 ZIP</button></div>
+<div class="card export-card" style="margin-top:14px">
+<h3>自动生成结果</h3><p class="sub">左浅、右浅、左深、右深均由同一张原图生成。</p>
+<div class="output-grid">
+<div class="out"><b>左浅</b><canvas id="outLeftLight"></canvas></div>
+<div class="out"><b>右浅</b><canvas id="outRightLight"></canvas></div>
+<div class="out"><b>左深</b><canvas id="outLeftDark"></canvas></div>
+<div class="out"><b>右深</b><canvas id="outRightDark"></canvas></div>
 </div>
-
-<div class="card history">
-<h3>最近 5 次版本</h3><p class="sub">参数与素材保存在当前浏览器，可一键恢复。</p>
-<div id="historyList" class="history-list"></div>
+<div id="checks" class="checks"></div>
+<div class="actions"><button id="downloadPngs" class="btn" disabled>下载 4 张 PNG</button><button id="downloadZip" class="btn dark" disabled>下载完整 ZIP</button></div>
 </div>
 </section>
 
@@ -107,163 +114,112 @@ const $=s=>document.querySelector(s), toast=$("#toast");
 function showToast(t){toast.textContent=t;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1800)}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function downloadBlob(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000)}
-
-/* tabs */
+function canvasToBlob(canvas){return new Promise(res=>canvas.toBlob(res,"image/png"))}
 document.querySelectorAll(".tab").forEach(btn=>btn.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===btn));document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id===btn.dataset.tab))});
 
-/* maker state */
-const SLOT_META={
- leftLight:{title:"左浅色",side:"left",mode:"light",export:"bubble_recv@3x.png"},
- leftDark:{title:"左暗黑",side:"left",mode:"dark",export:"bubble_recv_dark@3x.png"},
- rightLight:{title:"右浅色",side:"right",mode:"light",export:"bubble_send@3x.png"},
- rightDark:{title:"右暗黑",side:"right",mode:"dark",export:"bubble_send_dark@3x.png"}
-};
-const maker={current:"leftLight",slots:{}};
-for(const k of Object.keys(SLOT_META))maker.slots[k]={file:null,url:"",dataUrl:"",width:0,height:0,hasAlpha:null,edgeTouch:false,suggestedSide:"unknown",top:24,right:24,bottom:24,left:24};
-const slotGrid=$("#slotGrid");
-function renderSlots(){
- slotGrid.innerHTML=Object.entries(SLOT_META).map(([k,m])=>{const s=maker.slots[k];return `<article class="slot ${maker.current===k?"active":""}" data-slot="${k}"><div class="slot-head"><span class="slot-title">${m.title}</span><span class="slot-mode">${m.mode==="light"?"白天":"暗黑"}</span></div><div class="slot-preview">${s.url?`<img src="${s.url}" alt="">`:`<div class="slot-empty">未上传</div>`}</div><div class="slot-actions"><label class="btn primary" for="file-${k}">上传</label><button class="btn" data-select="${k}">编辑</button></div><input id="file-${k}" type="file" accept=".png,.webp,image/png,image/webp" data-file="${k}"></article>`}).join("");
- slotGrid.querySelectorAll("[data-slot]").forEach(el=>el.onclick=e=>{if(e.target.closest("label")||e.target.closest("button"))return;selectSlot(el.dataset.slot)});
- slotGrid.querySelectorAll("[data-select]").forEach(b=>b.onclick=()=>selectSlot(b.dataset.select));
- slotGrid.querySelectorAll("[data-file]").forEach(inp=>inp.onchange=e=>loadSlotFile(inp.dataset.file,e.target.files[0]));
-}
-function selectSlot(k){maker.current=k;renderSlots();syncEditor();renderPreview();runChecks()}
-async function fileToDataURL(file){return await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
-async function analyzeImage(file,dataUrl){
+const state={img:null,file:null,dataUrl:"",detected:"left",forceFlip:false,width:0,height:0,hasAlpha:false,confidence:0,slices:{top:24,right:24,bottom:24,left:24},previewMode:"light",length:"short"};
+const texts={short:["收到，我马上处理。","好的，稍后发给你。"],two:["这是两行文字，用来检查气泡上下边缘是否正常。","可以，我会用两行内容测试右侧气泡。"],long:["这是一段较长的测试文字，用来检查气泡在四行内容下的圆角、尖角、阴影和边缘是否仍然保持完整。","右侧也需要进行长文字压力测试，确认气泡横向和纵向拉伸后不会出现断裂或尖角变形。"],emoji:["收到啦 😊✨","没问题 👍🏻🎉"]};
+
+async function readImage(file){
+ const dataUrl=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)});
  const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=dataUrl});
+ return {dataUrl,img};
+}
+function analyzeDirection(img){
  const c=document.createElement("canvas"),ctx=c.getContext("2d",{willReadFrequently:true});c.width=img.naturalWidth;c.height=img.naturalHeight;ctx.drawImage(img,0,0);
- const d=ctx.getImageData(0,0,c.width,c.height).data;
- let hasAlpha=false,edgeTouch=false,leftMass=0,rightMass=0;
- for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++){const a=d[(y*c.width+x)*4+3];if(a<255)hasAlpha=true;if(a>16){if(x<c.width/2)leftMass++;else rightMass++;if(x===0||y===0||x===c.width-1||y===c.height-1)edgeTouch=true}}
- const delta=(rightMass-leftMass)/(Math.max(1,rightMass+leftMass));
- const suggestedSide=Math.abs(delta)<.03?"unknown":(delta>0?"right":"left");
- return {width:c.width,height:c.height,hasAlpha,edgeTouch,suggestedSide};
+ const d=ctx.getImageData(0,0,c.width,c.height).data;let alphaCount=0,hasAlpha=false;
+ const rows=[];for(let y=0;y<c.height;y++){let min=c.width,max=-1;for(let x=0;x<c.width;x++){const a=d[(y*c.width+x)*4+3];if(a<255)hasAlpha=true;if(a>18){alphaCount++;min=Math.min(min,x);max=Math.max(max,x)}}rows.push({min,max})}
+ const ys=rows.map((r,y)=>r.max>=0?y:null).filter(v=>v!==null);if(!ys.length)return{side:"left",confidence:0,hasAlpha};
+ const y0=Math.min(...ys),y1=Math.max(...ys),start=Math.floor(y0+(y1-y0)*.25),end=Math.floor(y0+(y1-y0)*.88);
+ let leftScore=0,rightScore=0,samples=0;
+ for(let y=start;y<=end;y++){const r=rows[y];if(r.max<0)continue;samples++;leftScore+=Math.max(0,(c.width*.18-r.min));rightScore+=Math.max(0,(r.max-c.width*.82))}
+ const diff=(rightScore-leftScore)/Math.max(1,leftScore+rightScore);
+ return {side:diff>0?"right":"left",confidence:Math.min(.98,Math.max(.35,Math.abs(diff)*2.2)),hasAlpha};
 }
-async function loadSlotFile(k,file){
- if(!file)return;const s=maker.slots[k];if(s.url)URL.revokeObjectURL(s.url);
- const dataUrl=await fileToDataURL(file),info=await analyzeImage(file,dataUrl);
- Object.assign(s,{file,url:URL.createObjectURL(file),dataUrl,...info});maker.current=k;renderSlots();syncEditor();renderPreview();runChecks();showToast(`${SLOT_META[k].title}已载入`);
+function actualSourceSide(){const side=state.detected;return state.forceFlip?(side==="left"?"right":"left"):side}
+function setSource(file){
+ readImage(file).then(({dataUrl,img})=>{
+   state.file=file;state.dataUrl=dataUrl;state.img=img;state.width=img.naturalWidth;state.height=img.naturalHeight;
+   const a=analyzeDirection(img);state.detected=a.side;state.hasAlpha=a.hasAlpha;state.confidence=a.confidence;state.forceFlip=false;
+   $("#sourcePreview").src=dataUrl;$("#sourcePreview").hidden=false;$("#uploadEmpty").hidden=true;$("#flipDirection").disabled=false;$("#clearSource").disabled=false;$("#downloadPngs").disabled=false;$("#downloadZip").disabled=false;
+   updateStatus();renderAll();showToast("气泡素材已载入");
+ });
 }
-function syncEditor(){
- const s=maker.slots[maker.current],stage=$("#canvasStage");
- if(!s.url){stage.hidden=true;$("#canvasEmpty").hidden=false}
- else{stage.hidden=false;$("#canvasEmpty").hidden=true;$("#editImage").src=s.url}
- ["top","right","bottom","left"].forEach(k=>{$(`#${k}Num`).value=s[k];$(`#${k}Range`).value=s[k]});
- requestAnimationFrame(updateGuides)
+$("#sourceFile").onchange=e=>{const f=e.target.files[0];if(f)setSource(f)};
+$("#flipDirection").onclick=()=>{state.forceFlip=!state.forceFlip;updateStatus();renderAll()};
+$("#clearSource").onclick=()=>{Object.assign(state,{img:null,file:null,dataUrl:"",width:0,height:0,hasAlpha:false,confidence:0});$("#sourcePreview").hidden=true;$("#uploadEmpty").hidden=false;$("#flipDirection").disabled=true;$("#clearSource").disabled=true;$("#downloadPngs").disabled=true;$("#downloadZip").disabled=true;updateStatus();renderAll()};
+function updateStatus(){
+ const side=state.img?(actualSourceSide()==="left"?"左气泡":"右气泡"):"等待检测";
+ $("#directionPill").textContent="方向："+side;$("#directionPill").className="pill "+(state.img?"ok":"");
+ $("#confidencePill").textContent="置信度："+(state.img?Math.round(state.confidence*100)+"%":"—");$("#confidencePill").className="pill "+(state.confidence>=.7?"ok":"warn");
+ $("#alphaPill").textContent="透明通道："+(state.img?(state.hasAlpha?"正常":"未检测到"):"—");$("#alphaPill").className="pill "+(state.img?(state.hasAlpha?"ok":"warn"):"");
 }
-function updateGuides(){
- const s=maker.slots[maker.current],img=$("#editImage"),stage=$("#canvasStage");if(!s.url||!img.clientWidth)return;
- const sx=img.clientWidth/s.width,sy=img.clientHeight/s.height;
- const left=s.left*sx,right=s.right*sx,top=s.top*sy,bottom=s.bottom*sy;
- stage.querySelector('[data-guide="left"]').style.left=left+"px";
- stage.querySelector('[data-guide="right"]').style.left=Math.max(left,img.clientWidth-right)+"px";
- stage.querySelector('[data-guide="top"]').style.top=top+"px";
- stage.querySelector('[data-guide="bottom"]').style.top=Math.max(top,img.clientHeight-bottom)+"px";
- const z=$("#zone");z.style.left=left+"px";z.style.top=top+"px";z.style.width=Math.max(0,img.clientWidth-left-right)+"px";z.style.height=Math.max(0,img.clientHeight-top-bottom)+"px";
-}
-window.addEventListener("resize",updateGuides);
+function darkSettings(){return{mode:$("#blendMode").value,color:$("#overlayColor").value,opacity:+$("#overlayOpacity").value/100,brightness:+$("#brightness").value/100,contrast:+$("#contrast").value/100,saturation:+$("#saturation").value/100}}
+["overlayOpacity","brightness","contrast","saturation"].forEach(id=>$("#"+id).oninput=()=>{$("#opacityVal").textContent=$("#overlayOpacity").value+"%";$("#brightnessVal").textContent=$("#brightness").value+"%";$("#contrastVal").textContent=$("#contrast").value+"%";$("#saturationVal").textContent=$("#saturation").value+"%";renderAll()});
+$("#blendMode").onchange=renderAll;$("#overlayColor").oninput=renderAll;
+$("#resetDark").onclick=()=>{$("#blendMode").value="multiply";$("#overlayColor").value="#000000";$("#overlayOpacity").value=58;$("#brightness").value=82;$("#contrast").value=108;$("#saturation").value=82;["overlayOpacity","brightness","contrast","saturation"].forEach(id=>$("#"+id).dispatchEvent(new Event("input")))};
+
 ["top","right","bottom","left"].forEach(k=>{
- const n=$(`#${k}Num`),r=$(`#${k}Range`);
- const apply=v=>{const s=maker.slots[maker.current],max=(k==="left"||k==="right"?s.width:s.height)||500;s[k]=Math.max(0,Math.min(max,Math.round(Number(v)||0)));n.value=s[k];r.value=s[k];updateGuides();renderPreview();runChecks()};
+ const n=$("#"+k+"Num"),r=$("#"+k+"Range");const apply=v=>{state.slices[k]=Math.max(0,Math.round(+v||0));n.value=state.slices[k];r.value=state.slices[k];renderAll()};
  n.oninput=e=>apply(e.target.value);r.oninput=e=>apply(e.target.value);
 });
-$("#canvasStage").addEventListener("pointerdown",e=>{
- const g=e.target.closest(".guide");if(!g)return;e.preventDefault();g.setPointerCapture(e.pointerId);
- const key=g.dataset.guide,s=maker.slots[maker.current],img=$("#editImage"),rect=img.getBoundingClientRect();
- const move=ev=>{let val;if(key==="left")val=(ev.clientX-rect.left)*s.width/rect.width;else if(key==="right")val=(rect.right-ev.clientX)*s.width/rect.width;else if(key==="top")val=(ev.clientY-rect.top)*s.height/rect.height;else val=(rect.bottom-ev.clientY)*s.height/rect.height;val=Math.max(0,Math.round(val));s[key]=val;$(`#${key}Num`).value=val;$(`#${key}Range`).value=val;updateGuides();renderPreview();runChecks()};
- g.onpointermove=move;g.onpointerup=()=>{g.onpointermove=null;g.onpointerup=null};
-});
-$("#canvasStage").addEventListener("dblclick",e=>{const g=e.target.closest(".guide");if(!g)return;maker.slots[maker.current][g.dataset.guide]=24;syncEditor();renderPreview();runChecks()});
-$("#resetSlices").onclick=()=>{Object.assign(maker.slots[maker.current],{top:24,right:24,bottom:24,left:24});syncEditor();renderPreview();runChecks()};
-function copyParams(target){const a=maker.slots[maker.current],b=maker.slots[target];["top","right","bottom","left"].forEach(k=>b[k]=a[k]);renderSlots();runChecks();showToast("切片参数已复制")}
-$("#copyToDark").onclick=()=>copyParams(SLOT_META[maker.current].side==="left"?"leftDark":"rightDark");
-$("#copyToLight").onclick=()=>copyParams(SLOT_META[maker.current].side==="left"?"leftLight":"rightLight");
-$("#copySameMode").onclick=()=>copyParams((SLOT_META[maker.current].side==="left"?"right":"left")+(SLOT_META[maker.current].mode==="light"?"Light":"Dark"));
+$("#resetSlices").onclick=()=>{Object.assign(state.slices,{top:24,right:24,bottom:24,left:24});["top","right","bottom","left"].forEach(k=>{$("#"+k+"Num").value=24;$("#"+k+"Range").value=24});renderAll()};
 
-/* preview */
-let previewMode="light",lengthMode="short";
-const texts={
- short:["收到，我马上处理。","好的，稍后发给你。"],
- two:["这是两行文字，用来检查气泡上下边缘是否会被拉坏。","可以，我会用两行内容测试右侧气泡是否正常。"],
- long:["这是一段较长的测试文字，用来检查气泡在四行内容下的圆角、尖角、阴影和边缘是否仍然保持完整。","右侧也需要进行长文字压力测试，确认气泡横向和纵向拉伸后不会出现断裂、花边或尖角变形。"],
- emoji:["收到啦 😊✨","没问题 👍🏻🎉"]
-};
-function applyBubble(el,s){
- if(!s||!s.url){el.style.borderImageSource="none";el.style.background="rgba(118,118,128,.16)";el.style.borderWidth="0";return}
- el.style.background="transparent";el.style.borderImageSource=`url("${s.url}")`;el.style.borderImageSlice=`${s.top} ${s.right} ${s.bottom} ${s.left} fill`;el.style.borderImageWidth=`${s.top}px ${s.right}px ${s.bottom}px ${s.left}px`;el.style.borderWidth=`${s.top}px ${s.right}px ${s.bottom}px ${s.left}px`;el.style.borderImageRepeat="stretch";
+function drawBase(canvas,mirror,dark){
+ if(!state.img){const ctx=canvas.getContext("2d");canvas.width=300;canvas.height=160;ctx.clearRect(0,0,300,160);return}
+ canvas.width=state.width;canvas.height=state.height;const ctx=canvas.getContext("2d");ctx.clearRect(0,0,canvas.width,canvas.height);ctx.save();
+ if(mirror){ctx.translate(canvas.width,0);ctx.scale(-1,1)}
+ const ds=darkSettings();ctx.filter=dark?`brightness(${ds.brightness}) contrast(${ds.contrast}) saturate(${ds.saturation})`:"none";ctx.drawImage(state.img,0,0);ctx.filter="none";
+ if(dark){ctx.globalCompositeOperation=ds.mode;ctx.globalAlpha=ds.opacity;ctx.fillStyle=ds.color;ctx.fillRect(0,0,canvas.width,canvas.height);ctx.globalAlpha=1;ctx.globalCompositeOperation="source-over"}
+ ctx.restore();
+}
+function desiredMirrorFor(side){return actualSourceSide()!==side}
+function renderOutputs(){
+ drawBase($("#outLeftLight"),desiredMirrorFor("left"),false);drawBase($("#outRightLight"),desiredMirrorFor("right"),false);drawBase($("#outLeftDark"),desiredMirrorFor("left"),true);drawBase($("#outRightDark"),desiredMirrorFor("right"),true);
+}
+function nineSliceDraw(ctx,imgCanvas,x,y,w,h,s){
+ const sw=imgCanvas.width,sh=imgCanvas.height,L=Math.min(s.left,sw-1),R=Math.min(s.right,sw-L-1),T=Math.min(s.top,sh-1),B=Math.min(s.bottom,sh-T-1);
+ const cx=sw-L-R,cy=sh-T-B,dL=Math.min(L,w/2),dR=Math.min(R,w-dL),dT=Math.min(T,h/2),dB=Math.min(B,h-dT),dw=Math.max(0,w-dL-dR),dh=Math.max(0,h-dT-dB);
+ const pieces=[
+ [0,0,L,T,x,y,dL,dT],[L,0,cx,T,x+dL,y,dw,dT],[L+cx,0,R,T,x+dL+dw,y,dR,dT],
+ [0,T,L,cy,x,y+dT,dL,dh],[L,T,cx,cy,x+dL,y+dT,dw,dh],[L+cx,T,R,cy,x+dL+dw,y+dT,dR,dh],
+ [0,T+cy,L,B,x,y+dT+dh,dL,dB],[L,T+cy,cx,B,x+dL,y+dT+dh,dw,dB],[L+cx,T+cy,R,B,x+dL+dw,y+dT+dh,dR,dB]
+ ];
+ for(const p of pieces){if(p[2]>0&&p[3]>0&&p[6]>0&&p[7]>0)ctx.drawImage(imgCanvas,...p)}
+}
+function renderBubble(canvas,wrap,side,dark){
+ const temp=document.createElement("canvas");drawBase(temp,desiredMirrorFor(side),dark);
+ const w=Math.max(1,Math.round(wrap.clientWidth)),h=Math.max(1,Math.round(wrap.clientHeight));canvas.width=w*2;canvas.height=h*2;canvas.style.width=w+"px";canvas.style.height=h+"px";const ctx=canvas.getContext("2d");ctx.scale(2,2);ctx.clearRect(0,0,w,h);if(state.img)nineSliceDraw(ctx,temp,0,0,w,h,state.slices);else{ctx.fillStyle="rgba(118,118,128,.16)";ctx.fillRect(0,0,w,h)}
 }
 function renderPreview(){
- const mode=previewMode==="light"?"Light":"Dark";$("#chat").className="chat "+previewMode;
- $("#leftBubble").textContent=texts[lengthMode][0];$("#rightBubble").textContent=texts[lengthMode][1];
- applyBubble($("#leftBubble"),maker.slots["left"+mode]);applyBubble($("#rightBubble"),maker.slots["right"+mode]);
+ const dark=state.previewMode==="dark";$("#chat").className="chat "+state.previewMode;
+ $("#leftText").textContent=texts[state.length][0];$("#rightText").textContent=texts[state.length][1];
+ requestAnimationFrame(()=>{renderBubble($("#leftCanvas"),$("#leftWrap"),"left",dark);renderBubble($("#rightCanvas"),$("#rightWrap"),"right",dark)});
 }
-document.querySelectorAll("[data-preview-mode]").forEach(b=>b.onclick=()=>{previewMode=b.dataset.previewMode;document.querySelectorAll("[data-preview-mode]").forEach(x=>x.classList.toggle("active",x===b));renderPreview()});
-document.querySelectorAll("[data-length]").forEach(b=>b.onclick=()=>{lengthMode=b.dataset.length;document.querySelectorAll("[data-length]").forEach(x=>x.classList.toggle("active",x===b));renderPreview()});
+document.querySelectorAll("[data-preview-mode]").forEach(b=>b.onclick=()=>{state.previewMode=b.dataset.previewMode;document.querySelectorAll("[data-preview-mode]").forEach(x=>x.classList.toggle("active",x===b));renderPreview()});
+document.querySelectorAll("[data-length]").forEach(b=>b.onclick=()=>{state.length=b.dataset.length;document.querySelectorAll("[data-length]").forEach(x=>x.classList.toggle("active",x===b));renderPreview()});
+window.addEventListener("resize",renderPreview);
 
-/* checks */
 function runChecks(){
- const rows=[];
- const filled=Object.entries(maker.slots).filter(([,s])=>s.file);
- rows.push({level:filled.length===4?"ok":filled.length?"warn":"err",title:`素材完整性：${filled.length}/4`,desc:filled.length===4?"四种素材已齐全。":"可继续制作，但完整导出建议补齐左浅、左深、右浅、右深。"});
- for(const [k,s] of filled){
-   const meta=SLOT_META[k],expected=meta.side;
-   rows.push({level:s.suggestedSide==="unknown"?"warn":s.suggestedSide===expected?"ok":"warn",title:`${meta.title}方向建议：${s.suggestedSide==="unknown"?"无法判断":s.suggestedSide==="left"?"偏左":"偏右"}`,desc:"该结果仅依据非透明像素分布估算；以实际尖角方向为准。"});
-   rows.push({level:s.hasAlpha?"ok":"warn",title:`${meta.title}透明通道：${s.hasAlpha?"正常":"未检测到"}`,desc:s.hasAlpha?"图片包含透明像素。":"可能存在白底或整张不透明背景。"});
-   rows.push({level:s.edgeTouch?"warn":"ok",title:`${meta.title}边缘检查：${s.edgeTouch?"内容触边":"四周留有透明边距"}`,desc:s.edgeTouch?"气泡像素接触画布边缘，导出后可能被裁切。":"未发现明显裁边风险。"});
-   rows.push({level:(s.width>=60&&s.height>=40)?"ok":"warn",title:`${meta.title}尺寸：${s.width}×${s.height}`,desc:(s.width>=60&&s.height>=40)?"分辨率可用于测试。":"图片尺寸偏小，拉伸后可能模糊。"});
-   const valid=s.left+s.right<s.width&&s.top+s.bottom<s.height;
-   rows.push({level:valid?"ok":"err",title:`${meta.title}切片区域：${valid?"有效":"无效"}`,desc:valid?"中间仍保留可拉伸区域。":"左右或上下保护区之和超过图片尺寸。"});
+ const rows=[];if(!state.img)rows.push(["err","未上传气泡素材"]);else{
+ rows.push([state.hasAlpha?"ok":"warn",state.hasAlpha?"透明通道正常":"未检测到透明像素，可能存在白底"]);
+ rows.push([state.confidence>=.7?"ok":"warn",`方向识别置信度 ${Math.round(state.confidence*100)}%`]);
+ const valid=state.slices.left+state.slices.right<state.width&&state.slices.top+state.slices.bottom<state.height;rows.push([valid?"ok":"err",valid?"九宫格切片有效":"切片保护区超过图片尺寸"]);
+ rows.push([state.width>=60&&state.height>=40?"ok":"warn",`原图尺寸 ${state.width}×${state.height}`]);
  }
- $("#checkList").innerHTML=rows.map(r=>`<div class="check"><span class="dot ${r.level}"></span><div><b>${esc(r.title)}</b><small>${esc(r.desc)}</small></div></div>`).join("");
- return rows;
+ $("#checks").innerHTML=rows.map(r=>`<div class="check"><span class="dot ${r[0]}"></span><div>${esc(r[1])}</div></div>`).join("");
 }
-
-/* history */
-const HIST_KEY="wechatBubbleMakerHistoryV1";
-async function snapshot(){
- const slots={};for(const [k,s] of Object.entries(maker.slots))slots[k]={top:s.top,right:s.right,bottom:s.bottom,left:s.left,dataUrl:s.dataUrl,width:s.width,height:s.height,hasAlpha:s.hasAlpha,edgeTouch:s.edgeTouch,suggestedSide:s.suggestedSide,name:s.file?s.file.name:""};
- return {id:Date.now(),time:new Date().toLocaleString("zh-CN"),slots};
-}
-function getHistory(){try{return JSON.parse(localStorage.getItem(HIST_KEY)||"[]")}catch{return[]}}
-function setHistory(h){localStorage.setItem(HIST_KEY,JSON.stringify(h.slice(0,5)));renderHistory()}
-$("#saveHistory").onclick=async()=>{const h=getHistory();h.unshift(await snapshot());setHistory(h);showToast("当前版本已保存")};
-function renderHistory(){
- const h=getHistory();$("#historyList").innerHTML=h.length?h.map(x=>`<div class="history-item"><div><b>${esc(x.time)}</b><small>保存的素材与切片参数</small></div><button class="btn" data-restore="${x.id}">恢复</button></div>`).join(""):'<div class="slot-empty">暂无历史版本</div>';
- document.querySelectorAll("[data-restore]").forEach(b=>b.onclick=()=>restoreHistory(Number(b.dataset.restore)));
-}
-async function restoreHistory(id){
- const h=getHistory().find(x=>x.id===id);if(!h)return;
- for(const [k,v] of Object.entries(h.slots)){const s=maker.slots[k];Object.assign(s,v);if(v.dataUrl){const blob=await (await fetch(v.dataUrl)).blob();s.file=new File([blob],v.name||`${k}.png`,{type:blob.type||"image/png"});s.url=URL.createObjectURL(blob)}}
- renderSlots();syncEditor();renderPreview();runChecks();showToast("历史版本已恢复");
-}
-
-/* import/export */
-$("#importZip").onchange=async e=>{
- const file=e.target.files[0];if(!file)return;
- try{
-   const z=await JSZip.loadAsync(file),cfgEntry=z.file("bubble-config.json"),cfg=cfgEntry?JSON.parse(await cfgEntry.async("string")):null;
-   const aliases={leftLight:["bubble_recv@3x.png","leftLight.png","left.png"],leftDark:["bubble_recv_dark@3x.png","leftDark.png"],rightLight:["bubble_send@3x.png","rightLight.png","right.png"],rightDark:["bubble_send_dark@3x.png","rightDark.png"]};
-   for(const [k,names] of Object.entries(aliases)){const entry=names.map(n=>z.file(n)).find(Boolean);if(entry){const blob=await entry.async("blob"),f=new File([blob],entry.name,{type:blob.type||"image/png"});await loadSlotFile(k,f)}}
-   if(cfg){for(const k of Object.keys(SLOT_META)){const c=cfg[k]||cfg[SLOT_META[k].side];if(c)Object.assign(maker.slots[k],{top:c.top??24,right:c.right??24,bottom:c.bottom??24,left:c.left??24})}}
-   renderSlots();syncEditor();renderPreview();runChecks();showToast("旧 ZIP 已导入");
- }catch(err){showToast("ZIP 读取失败")}
-};
-$("#exportMaker").onclick=async()=>{
- const checks=runChecks(),hasError=checks.some(x=>x.level==="err");if(hasError&&!confirm("检测到切片错误，仍要导出吗？"))return;
- const zip=new JSZip(),cfg={version:2,unit:"px",createdAt:new Date().toISOString(),slots:{}};
- for(const [k,s] of Object.entries(maker.slots)){if(s.file)zip.file(SLOT_META[k].export,s.file);cfg.slots[k]={file:s.file?SLOT_META[k].export:null,top:s.top,right:s.right,bottom:s.bottom,left:s.left,width:s.width,height:s.height}}
- zip.file("bubble-config.json",JSON.stringify(cfg,null,2));
- const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE"});downloadBlob(blob,"微信气泡制作包.zip");showToast("气泡 ZIP 已生成");
-};
+function renderAll(){renderOutputs();renderPreview();runChecks()}
+$("#downloadPngs").onclick=async()=>{if(!state.img)return;const names=[["outLeftLight","bubble_recv@3x.png"],["outRightLight","bubble_send@3x.png"],["outLeftDark","bubble_recv_dark@3x.png"],["outRightDark","bubble_send_dark@3x.png"]];for(const [id,name] of names){downloadBlob(await canvasToBlob($("#"+id)),name);await new Promise(r=>setTimeout(r,180))}};
+$("#downloadZip").onclick=async()=>{if(!state.img)return;const zip=new JSZip(),map=[["outLeftLight","bubble_recv@3x.png"],["outRightLight","bubble_send@3x.png"],["outLeftDark","bubble_recv_dark@3x.png"],["outRightDark","bubble_send_dark@3x.png"]];for(const [id,name] of map)zip.file(name,await canvasToBlob($("#"+id)));zip.file("bubble-config.json",JSON.stringify({version:3,sourceSide:actualSourceSide(),slices:state.slices,dark:darkSettings()},null,2));downloadBlob(await zip.generateAsync({type:"blob",compression:"DEFLATE"}),"微信气泡制作包.zip")};
 
 /* batch renamer */
-let items=[];const list=$("#list");
-function ext(n){const m=n.match(/(\.[^.]+)$/);return m?m[1]:""}function cleanBase(n){return n.split("/").pop()}
+let items=[];const list=$("#list");function ext(n){const m=n.match(/(\.[^.]+)$/);return m?m[1]:""}function cleanBase(n){return n.split("/").pop()}
 function targetName(name){const base=cleanBase(name);if(RULES[base])return{name:RULES[base],matched:true};const noext=base.replace(/\.[^.]+$/,"");for(const [k,v] of Object.entries(RULES)){if(k.replace(/\.[^.]+$/,"")===noext)return{name:v.replace(/\.png$/i,ext(base)||".png"),matched:true}}if(/^ChatRoom_Bubble_/i.test(base))return{name:base,matched:true};return{name:base,matched:false}}
 async function addFiles(fileList){for(const file of [...fileList]){const lower=file.name.toLowerCase();if(lower.endsWith(".zip")){try{const z=await JSZip.loadAsync(file);const entries=Object.values(z.files).filter(e=>{const path=e.name.replace(/\\/g,"/"),base=path.split("/").pop()||"";return !e.dir&&/\.(png|webp)$/i.test(base)&&!path.includes("__MACOSX/")&&!base.startsWith("._")&&base!==".DS_Store"});for(const e of entries){const blob=await e.async("blob"),name=cleanBase(e.name);items.push(makeItem(new File([blob],name,{type:blob.type||"image/png"}),e.name))}}catch{showToast("ZIP 读取失败")}}else if(/\.(png|webp)$/i.test(lower)&&!file.name.startsWith("._")&&file.name!==".DS_Store"&&!(file.webkitRelativePath||"").includes("__MACOSX/"))items.push(makeItem(file,file.webkitRelativePath||file.name))}dedupe();render()}
 function makeItem(file,path){const t=targetName(file.name);return{file,path,old:file.name,newName:t.name,matched:t.matched,url:URL.createObjectURL(file)}}function dedupe(){const seen=new Set();items=items.filter(x=>{const k=x.path+"|"+x.file.size;if(seen.has(k))return false;seen.add(k);return true})}
-function render(){ $("#total").textContent=items.length;$("#matched").textContent=items.filter(x=>x.matched).length;$("#unmatched").textContent=items.filter(x=>!x.matched).length;$("#download").disabled=!items.length;if(!items.length){list.innerHTML='<div class="empty">添加素材后，这里会显示原文件名和新文件名。</div>';return}list.innerHTML=items.map(x=>`<div class="row"><img class="thumb" src="${x.url}" alt=""><div class="names"><div class="old">${esc(x.old)}</div><div class="new">${esc(x.newName)}</div></div><span class="status ${x.matched?"oktag":"warntag"}">${x.matched?"已匹配":"原名保留"}</span></div>`).join("")}
+function render(){ $("#total").textContent=items.length;$("#matched").textContent=items.filter(x=>x.matched).length;$("#unmatched").textContent=items.filter(x=>!x.matched).length;$("#download").disabled=!items.length;if(!items.length){list.innerHTML='<div class="empty">添加素材后，这里会显示原文件名和新文件名。</div>';return}list.innerHTML=items.map(x=>`<div class="row"><img class="thumb" src="${x.url}" alt=""><div class="names"><div class="old">${esc(x.old)}</div><div class="new">${esc(x.newName)}</div></div><span class="tag ${x.matched?"oktag":"warntag"}">${x.matched?"已匹配":"原名保留"}</span></div>`).join("")}
 $("#files").onchange=e=>addFiles(e.target.files);$("#folder").onchange=e=>addFiles(e.target.files);$("#clear").onclick=()=>{items.forEach(x=>URL.revokeObjectURL(x.url));items=[];render()};$("#download").onclick=async()=>{const zip=new JSZip(),used=new Map();for(const x of items){let name=x.newName,count=used.get(name)||0;used.set(name,count+1);if(count){const e=ext(name),b=name.slice(0,-e.length);name=`${b}_${count+1}${e}`}zip.file(name,x.file)}downloadBlob(await zip.generateAsync({type:"blob",compression:"DEFLATE"}),"微信气泡_已重命名.zip")};
-renderSlots();syncEditor();renderPreview();runChecks();renderHistory();render();
+updateStatus();renderAll();render();
 </script>
 </body></html>
