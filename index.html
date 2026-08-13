@@ -13,7 +13,7 @@ body{background:var(--bg)}
 button,input,select{font:inherit}.shell{width:min(1040px,100%);margin:auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(34px + env(safe-area-inset-bottom))}
 .header{display:flex;justify-content:space-between;align-items:flex-start;margin:10px 4px 14px}.header h1{font-size:34px;letter-spacing:-1.2px;margin:0 0 5px}.header p{margin:0;color:var(--sub);font-size:14px}.badge{padding:8px 11px;border-radius:999px;background:rgba(52,199,89,.14);color:var(--green);font-weight:750;font-size:12px}
 .card{background:var(--card);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);overflow:hidden}
-.tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin:0 0 14px;border-radius:16px;background:rgba(118,118,128,.13)}.tab{border:0;border-radius:13px;padding:11px 10px;background:transparent;color:var(--sub);font-weight:750}.tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 9px rgba(0,0,0,.09)}.panel{display:none}.panel.active{display:block}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;margin:0 0 14px;border-radius:16px;background:rgba(118,118,128,.13)}.tab{border:0;border-radius:13px;padding:11px 6px;background:transparent;color:var(--sub);font-weight:750}.tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 9px rgba(0,0,0,.09)}.panel{display:none}.panel.active{display:block}
 .btn{appearance:none;border:0;border-radius:14px;padding:11px 15px;font-weight:750;font-size:14px;background:#e5e5ea;color:#111;cursor:pointer}.btn.primary{background:var(--blue);color:#fff}.btn.dark{background:#1c1c1e;color:#fff}.btn.red{background:rgba(255,59,48,.12);color:var(--red)}.btn:disabled{opacity:.38;cursor:not-allowed}input[type=file]{display:none}
 .hero{padding:18px}.hero h2{margin:0 0 5px;font-size:22px}.hero p{margin:0 0 16px;color:var(--sub);font-size:13px}
 .upload{border:1.5px dashed rgba(10,132,255,.45);border-radius:22px;background:rgba(10,132,255,.06);padding:24px;text-align:center}.upload img{max-width:100%;max-height:210px;object-fit:contain;border-radius:16px;background:rgba(118,118,128,.07);display:block;margin:0 auto 14px}.upload-empty{height:150px;display:grid;place-items:center;color:var(--sub)}
@@ -38,7 +38,7 @@ button,input,select{font:inherit}.shell{width:min(1040px,100%);margin:auto;paddi
 <body>
 <main class="shell">
 <header class="header"><div><h1>微信气泡制作器</h1><p>单图生成左右与暗黑版本</p></div><span class="badge">iOS</span></header>
-<nav class="tabs"><button class="tab active" data-tab="maker">气泡制作</button><button class="tab" data-tab="rename">批量命名</button></nav>
+<nav class="tabs"><button class="tab active" data-tab="maker">气泡制作</button><button class="tab" data-tab="continuous">连续气泡</button><button class="tab" data-tab="rename">批量命名保存</button></nav>
 
 <section id="maker" class="panel active">
 <div class="card hero">
@@ -102,9 +102,12 @@ button,input,select{font:inherit}.shell{width:min(1040px,100%);margin:auto;paddi
 </div>
 </section>
 
-<section id="rename" class="panel">
+<section id="continuous" class="panel">
 <section class="card editor"><h3>连续气泡预览</h3><p class="sub">上传 16 个位置的气泡，实时查看连续消息效果。</p><div class="segment"><button class="active" data-cont-mode="light">☀️ 浅色模式</button><button data-cont-mode="dark">🌙 深色模式</button></div><div id="continuousChat" class="continuous-chat"></div></section>
 <section class="card"><div class="toolbar"><h3>气泡素材（left / right）</h3><span id="continuousCount" class="pill">0 / 16</span></div><div id="continuousSlots" class="slot-grid"></div><div class="drop" id="continuousDrop"><div style="font-size:28px">📁</div><p class="sub">拖拽或选择文件，按 left_top.png / right_middle_dark.png 自动匹配</p><label class="btn primary" for="continuousFiles">选择图片</label><input id="continuousFiles" type="file" multiple accept="image/png,image/webp,.png,.webp"></div><div class="footer"><button id="clearContinuous" class="btn red">清空连续气泡</button><button id="exportContinuous" class="btn dark" disabled>导出连续气泡 ZIP</button></div></section>
+</section>
+
+<section id="rename" class="panel">
 <section class="card" style="padding:12px"><div id="drop" class="drop"><h2>添加气泡素材</h2><p class="sub">支持 PNG、WebP、ZIP 和文件夹</p><label class="btn primary" for="files">选择文件</label><label class="btn" for="folder">选择文件夹</label><input id="files" type="file" multiple accept=".png,.webp,.zip"><input id="folder" type="file" multiple webkitdirectory directory></div></section>
 <section class="stats"><div class="stat"><b id="total">0</b><span>文件总数</span></div><div class="stat"><b id="matched">0</b><span>已匹配</span></div><div class="stat"><b id="unmatched">0</b><span>待确认</span></div></section>
 <section class="card"><div class="toolbar"><h3>命名预览</h3><button id="clear">清空</button></div><div id="list" class="list"><div class="empty">添加素材后，这里会显示原文件名和新文件名。</div></div><div class="footer"><button id="download" class="btn dark" disabled>下载重命名 ZIP</button></div></section>
