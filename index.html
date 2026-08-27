@@ -151,6 +151,7 @@ Object.entries(bubbleSides).forEach(([side,info])=>Object.entries(bubblePosition
  const cnPos={single:"",top:"上",middle:"中",bottom:"下"}[position];
  addInputAliases(light,`${info.xos}_${p.xos}.png`,info.cn+"浅"+cnPos,info.cn+cnPos+"浅",info.cn+cnPos,info.cn+"浅"+cnPos+".png");
  addInputAliases(dark,`${info.xos}_${p.xos}_dark.png`,info.cn+"深"+cnPos,info.cn+cnPos+"深",info.cn+"深"+cnPos+".png");
+ if(position==="single"){addInputAliases(light,info.cn+"单条",info.cn+"单条浅");addInputAliases(dark,info.cn+"单条深")}
 }));
 Object.entries(RULES).forEach(([source,output])=>{INPUT_ALIASES[normalizeBubbleInput(source)]=output});
 const BOX_EXPORT_GROUPS=[
